@@ -54,7 +54,7 @@ export const authService = {
       }
 
       return response.data;
-      
+    
     } catch (error: any) {
       const message = error.response?.data?.message || error.message || 'Failed to sign in';
       throw new Error(message);

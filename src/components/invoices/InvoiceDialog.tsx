@@ -9,6 +9,24 @@ interface InvoiceDialogProps {
   invoice?: Invoice | null;
 }
 
+// Static product list
+const productList = [
+  { id: '1', name: 'Kent Water Softener', price: 15000 },
+  { id: '2', name: 'RO System', price: 25000 },
+  { id: '3', name: 'UV Filter', price: 8000 },
+  { id: '4', name: 'Sand Filter', price: 12000 },
+  { id: '5', name: 'Filter Cartridge', price: 2000 },
+  { id: '6', name: 'Installation Kit', price: 1500 },
+  { id: '7', name: 'Pressure Pump', price: 5000 },
+  { id: '8', name: 'Water Tank', price: 3000 }
+];
+
+// Delivery status options
+const deliveryStatusOptions = [
+  { value: 'delivered', label: 'Delivered' },
+  { value: 'not_delivered', label: 'Not Delivered' }
+];
+
 export default function InvoiceDialog({ isOpen, onClose, invoice = null }: InvoiceDialogProps) {
   const [formData, setFormData] = useState<Partial<Invoice>>(
     invoice || {
@@ -32,7 +50,7 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
       },
       products: [],
       transport: {
-        deliveredBy: '',
+        deliveredBy: 'not_delivered',
         deliveryDate: ''
       },
       paidStatus: '',
@@ -49,6 +67,18 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
     productSerialNo: ''
   });
 
+  // Handle product selection from dropdown
+  const handleProductSelect = (productId: string) => {
+    const selectedProduct = productList.find(p => p.id === productId);
+    if (selectedProduct) {
+      setNewProduct({
+        ...newProduct,
+        productName: selectedProduct.name,
+        productPrice: selectedProduct.price
+      });
+    }
+  };
+
   useEffect(() => {
     if (invoice) {
       setFormData(invoice);
@@ -57,7 +87,6 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
     console.log('Submitting form data:', formData);
     onClose();
   };
@@ -129,6 +158,7 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                         value={formData.invoiceNo}
                         onChange={(e) => setFormData({ ...formData, invoiceNo: e.target.value })}
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
+                        required
                       />
                     </div>
                     <div>
@@ -261,6 +291,42 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                             className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                           />
                         </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">GST Phone</label>
+                          <input
+                            type="number"
+                            value={formData.gstDetails?.gstPhone || ''}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              gstDetails: { ...formData.gstDetails!, gstPhone: Number(e.target.value) }
+                            })}
+                            className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">GST Email</label>
+                          <input
+                            type="email"
+                            value={formData.gstDetails?.gstEmail}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              gstDetails: { ...formData.gstDetails!, gstEmail: e.target.value }
+                            })}
+                            className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">GST Address</label>
+                          <textarea
+                            value={formData.gstDetails?.gstAddress}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              gstDetails: { ...formData.gstDetails!, gstAddress: e.target.value }
+                            })}
+                            rows={3}
+                            className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -295,13 +361,19 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                     {/* Add Product Form */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
-                        <input
-                          type="text"
-                          value={newProduct.productName}
-                          onChange={(e) => setNewProduct({ ...newProduct, productName: e.target.value })}
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Product</label>
+                        <select
+                          value={productList.find(p => p.name === newProduct.productName)?.id || ''}
+                          onChange={(e) => handleProductSelect(e.target.value)}
                           className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                        />
+                        >
+                          <option value="">Select a product</option>
+                          {productList.map(product => (
+                            <option key={product.id} value={product.id}>
+                              {product.name} - ₹{product.price}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Serial Number</label>
@@ -336,7 +408,7 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                     <button
                       type="button"
                       onClick={addProduct}
-                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
                     >
                       <Package className="h-4 w-4 mr-2" />
                       Add Product
@@ -348,16 +420,21 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                     <h4 className="text-lg font-medium text-gray-900 mb-4">Transport Details</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Delivered By</label>
-                        <input
-                          type="text"
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Status</label>
+                        <select
                           value={formData.transport?.deliveredBy}
                           onChange={(e) => setFormData({
                             ...formData,
                             transport: { ...formData.transport!, deliveredBy: e.target.value }
                           })}
                           className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                        />
+                        >
+                          {deliveryStatusOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Date</label>

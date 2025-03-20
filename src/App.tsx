@@ -1,8 +1,10 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { checkAuth } from './store/slices/authSlice';
 import AuthDialog from './components/AuthDialog';
 import Dashboard from './components/Dashboard';
+import InvoiceView from './components/invoices/InvoiceView';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -22,7 +24,14 @@ function App() {
   }
 
   if (isAuthenticated) {
-    return <Dashboard />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="/invoice/:id" element={<InvoiceView />} />
+          <Route path="/*" element={<Dashboard />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (

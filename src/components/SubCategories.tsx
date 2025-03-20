@@ -283,8 +283,10 @@ export default function SubCategories() {
     try {
       setLoading(true);
       setError(null);
-      const result = await SubCategoryOperations.getSubCategories();
-      setSubCategories(result.data.data);
+      const response = await SubCategoryOperations.getSubCategories();
+      setSubCategories(response.data.data);
+      // Use mock data instead of actual API call
+      // setSubCategories(mockSubCategories.data);
     } catch (err) {
       console.error('Error fetching subcategories:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch subcategories');

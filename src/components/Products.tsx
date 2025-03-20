@@ -288,11 +288,9 @@ export default function Products() {
     try {
       setLoading(true);
       setError(null);
-      const result = await ProductOperations.getProducts();
-      console.log("prod", result.data)
-      setProducts(result.data.data);
-      // Use mock data instead of API call
-      // setProducts(mockProducts.data);
+      
+      const response = await ProductOperations.getProducts();
+      setProducts(response.data.data);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch products');
