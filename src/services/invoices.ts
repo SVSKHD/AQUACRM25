@@ -241,7 +241,7 @@ export const invoiceOperations = {
 
   deleteInvoice: async (invoiceId: string): Promise<void> => {
     try {
-      await axios.delete(`${BASE_URL}/crm/admin/delete-invoice/${invoiceId}`);
+      await axios.delete(`${BASE_URL}/crm/delete/invoice/${invoiceId}`, {headers});
     } catch (error) {
       console.error('Error deleting invoice:', error);
       throw error;

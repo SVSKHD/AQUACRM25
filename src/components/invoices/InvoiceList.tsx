@@ -2,12 +2,13 @@ import {useState, Fragment} from 'react';
 import { FileText, Edit2, Trash2, Send, ExternalLink, Download, Package, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
-import type { Invoice } from '@/services/invoices';
+import { invoiceOperations, type Invoice } from '@/services/invoices';
 
 interface InvoiceListProps {
   invoices: Invoice[];
   onEdit: (invoice: Invoice) => void;
-  calculateTotal: (products: Invoice['products']) => number;
+  onDelete?: (invoice: Invoice) => void;
+  calculateTotal: (products: Invoice["products"]) => number;
 }
 
 
@@ -108,16 +109,26 @@ export default function InvoiceList({ invoices, onEdit, calculateTotal, onDelete
    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
    const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
-   const handleDeleteClick = (invoice: Invoice) => {
-     setSelectedInvoice(invoice);
-     setIsDeleteDialogOpen(true);
-   };
+  const handleDeleteClick = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setIsDeleteDialogOpen(true);
+    console.log("Invoice selected for deletion:", invoice);
+  };
 
-   const handleDeleteConfirm = () => {
-     if (selectedInvoice && onDelete) {
-       onDelete(selectedInvoice);
-     }
-   };
+const handleDeleteConfirm = async() => {
+  if (selectedInvoice) {
+    const response= await invoiceOperations.deleteInvoice(selectedInvoice._id);
+    console.log("Invoice deleted:", response);
+  } else {
+    console.warn("No invoice selected for deletion!");
+  }
+
+  setIsDeleteDialogOpen(false);
+  setSelectedInvoice(null);
+};
+
+
+
   return (
     <>
       <table className="min-w-full divide-y divide-gray-300">
