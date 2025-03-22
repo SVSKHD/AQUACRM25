@@ -8,6 +8,9 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  server:{
+    port:4000
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

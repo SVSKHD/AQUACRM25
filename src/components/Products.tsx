@@ -3,6 +3,7 @@
 import { useState, Fragment, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, Package } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
+import ProductOperations from '@/services/product';
 
 interface ProductPhoto {
   id: string;
@@ -288,8 +289,9 @@ export default function Products() {
       setLoading(true);
       setError(null);
       
-      // Use mock data instead of API call
-      setProducts(mockProducts.data);
+      const response = await ProductOperations.getProducts();
+
+      setProducts(response.data.data);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch products');

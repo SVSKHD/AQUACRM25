@@ -151,7 +151,7 @@ export default function Invoices() {
   };
 
   const calculateTotal = (products: Invoice['products']) => {
-    return products.reduce((sum, product) => sum + (product.productPrice * product.productQuantity), 0);
+    return products.reduce((sum, product) => sum + (product.productPrice), 0);
   };
 
   // Calculate total statistics
