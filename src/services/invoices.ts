@@ -188,6 +188,16 @@ export const invoiceOperations = {
     }
   },
 
+  getInvoiceById: async (invoiceId: any): Promise<Invoice | null> => {
+    try {
+      const response = await axios.get<Invoice>(`${BASE_URL}/crm/invoice/${invoiceId}`);
+      return response;
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+      return null;
+    }
+  },
+
   createInvoice: async (invoice: Partial<Invoice>): Promise<Invoice> => {
     try {
       // For demo purposes, return a mock response

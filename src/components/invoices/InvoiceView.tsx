@@ -19,6 +19,7 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { Invoice } from "@/services/invoices";
+import { invoiceOperations } from "@/services/invoices";
 
 const termsAndConditions = [
   {
@@ -62,65 +63,25 @@ export default function InvoiceView() {
   const [downloading, setDownloading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+ 
   useEffect(() => {
-    // In a real app, fetch the specific invoice
-    // For demo, we'll use mock data
-    setLoading(true);
-    const mockInvoice: Invoice = {
-      _id: id || "1",
-      invoiceNo: `INV-2025-${id || "001"}`,
-      date: "15/03/2025",
-      customerDetails: {
-        name: "John Doe",
-        phone: 9876543210,
-        email: "john@example.com",
-        address: "123 Main St, City",
-      },
-      gst: true,
-      po: true, // Set to true for testing
-      quotation: false,
-      gstDetails: {
-        gstName: "John Doe Enterprises",
-        gstNo: "GST123456789",
-        gstPhone: null,
-        gstEmail: "accounts@johndoe.com",
-        gstAddress: "123 Business Park",
-      },
-      products: [
-        {
-          productName: "Water Softener",
-          productQuantity: 1,
-          productPrice: 15000,
-          productSerialNo: "WS-001",
-        },
-        {
-          productName: "Installation Kit",
-          productQuantity: 1,
-          productPrice: 1500,
-          productSerialNo: "IK-001",
-        },
-        {
-          productName: "Filter Cartridge",
-          productQuantity: 2,
-          productPrice: 2000,
-          productSerialNo: "FC-001,FC-002",
-        },
-      ],
-      transport: {
-        deliveredBy: "not_delivered",
-        deliveryDate: "2025-03-20",
-      },
-      paidStatus: "paid",
-      aquakartOnlineUser: false,
-      aquakartInvoice: true,
-      paymentType: "upi",
-    };
-
-    setTimeout(() => {
-      setInvoice(mockInvoice);
-      setLoading(false);
-    }, 1000);
+    fetchInvoice()
   }, [id]);
+
+  const fetchInvoice = async () => { 
+    setLoading(true);
+    try {
+      await invoiceOperations.getInvoiceById(id).then((res) => {
+         setTimeout(() => {
+           setInvoice(res.data);
+           setLoading(false);
+         }, 1000);
+      })
+    } catch (error) {
+      setError("An error occurred while fetching the invoice.");
+      setLoading(false);
+    }
+  }
 
 const handleDownloadPDF = () => {
   if (!invoice) return;
@@ -284,9 +245,21 @@ const handleDownloadPDF = () => {
     );
   }
 
+
+   const gstValueGenerate = (price) => {
+     let basePrice = Math.floor(price * 0.8474594);
+     let gst = Math.floor(basePrice * 0.18);
+     return gst;
+   };
+
+   const BasePrice = (price:number) => {
+     let basePrice = Math.floor(price * 0.8474594);
+     return basePrice;
+   };
+
   const calculateSubtotal = () => {
     return invoice.products.reduce(
-      (sum, product) => sum + product.productPrice * product.productQuantity,
+      (sum, product) => sum + product.productPrice,
       0
     );
   };
@@ -296,10 +269,7 @@ const handleDownloadPDF = () => {
     return invoice.gst ? subtotal * 0.18 : 0; // Assuming 18% GST
   };
 
-  const calculateTotal = () => {
-    return calculateSubtotal() + calculateGST();
-  };
-
+ 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto">
@@ -455,10 +425,10 @@ const handleDownloadPDF = () => {
                         Quantity
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Price
+                        Gst
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total
+                        Base Price
                       </th>
                     </tr>
                   </thead>
@@ -480,12 +450,15 @@ const handleDownloadPDF = () => {
                           {product.productQuantity}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-gray-500">
-                          ₹{product.productPrice.toLocaleString()}
+                          ₹
+                          {gstValueGenerate(
+                            product.productPrice
+                          ).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-medium">
                           ₹
-                          {(
-                            product.productPrice * product.productQuantity
+                          {BasePrice(
+                            product.productPrice
                           ).toLocaleString()}
                         </td>
                       </tr>
@@ -501,17 +474,20 @@ const handleDownloadPDF = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
-                    <span>₹{calculateSubtotal().toLocaleString()}</span>
+                    <span>
+                      ₹
+                      {BasePrice(calculateSubtotal()).toLocaleString()}
+                    </span>
                   </div>
                   {invoice.gst && (
                     <div className="flex justify-between text-gray-600">
                       <span>GST (18%)</span>
-                      <span>₹{calculateGST().toLocaleString()}</span>
+                      <span>₹{gstValueGenerate(calculateSubtotal()).toLocaleString()}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-lg font-semibold text-gray-900 pt-3 border-t border-gray-200">
                     <span>Total</span>
-                    <span>₹{calculateTotal().toLocaleString()}</span>
+                    <span>₹{calculateSubtotal() .toLocaleString()}</span>
                   </div>
                 </div>
               </div>
