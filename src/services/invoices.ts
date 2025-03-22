@@ -174,14 +174,14 @@ export const invoiceOperations = {
   getInvoices: async (): Promise<{ data: Invoice[] }> => {
     try {
       // Use dummy data instead of making an API call that could cause cloning errors
-      return { data: [...dummyInvoices] };
+      // return { data: [...dummyInvoices] };
       
-      /* Commented out actual API call to prevent errors
+     
       const response = await axios.get<{ data: Invoice[] }>(`${BASE_URL}/crm/admin/all-invoices`);
       return {
         data: response.data.data.map(invoice => sanitizeInvoiceData(invoice) as Invoice)
       };
-      */
+      
     } catch (error) {
       console.error('Error fetching invoices:', error);
       return { data: [] };

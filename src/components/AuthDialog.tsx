@@ -21,7 +21,6 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     e.preventDefault();
     try {
       await dispatch(signIn({ email, password })).unwrap();
-      
       onClose();
     } catch (error) {
       console.error('Auth error:', error);

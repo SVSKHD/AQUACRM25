@@ -3,7 +3,7 @@
 import { useState, Fragment, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, GitFork } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
-import SubCategoryOperations from '@/services/sub-Category';
+import SubCategoryOperations from '@/services/subCategories';
 
 interface SubCategoryPhoto {
   id: string;
@@ -283,6 +283,7 @@ export default function SubCategories() {
     try {
       setLoading(true);
       setError(null);
+      
       const result = await SubCategoryOperations.getSubCategories();
       setSubCategories(result.data.data);
     } catch (err) {

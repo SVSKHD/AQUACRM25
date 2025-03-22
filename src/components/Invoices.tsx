@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { Plus, Search, FileText, IndianRupee } from "lucide-react";
-import { Tab } from "@headlessui/react";
-import InvoiceApiOperations from "@/services/invoice";
-import InvoiceDialog from "./invoices/InvoiceDialog";
-import InvoiceList from "./invoices/InvoiceList";
-import PaginationControls from "./invoices/PaginationControls";
-import { Invoice } from "@/services/invoices";
-import notificationOperations from "@/services/notifications";
+import { useState, useEffect } from 'react';
+import { Plus, Search, FileText, IndianRupee, Calendar, Filter, Download, FileSpreadsheet, File as FilePdf } from 'lucide-react';
+import { Tab } from '@headlessui/react';
+import { invoiceOperations, type Invoice } from '@/services/invoices';
+import { exportService } from '@/services/export';
+import InvoiceDialog from './invoices/InvoiceDialog';
+import InvoiceList from './invoices/InvoiceList';
+import PaginationControls from './invoices/PaginationControls';
 
 interface TabItem {
   name: string;
@@ -14,29 +13,44 @@ interface TabItem {
 }
 
 const tabs: TabItem[] = [
-  { name: "All", filter: () => true },
-  {
-    name: "Regular",
-    filter: (invoice) => !invoice.gst && !invoice.po && !invoice.quotation,
-  },
-  { name: "GST", filter: (invoice) => invoice.gst },
-  { name: "PO", filter: (invoice) => invoice.po },
-  { name: "Quotation", filter: (invoice) => invoice.quotation },
+  { name: 'All', filter: () => true },
+  { name: 'Regular', filter: (invoice) => !invoice.gst && !invoice.po && !invoice.quotation },
+  { name: 'GST', filter: (invoice) => invoice.gst },
+  { name: 'PO', filter: (invoice) => invoice.po },
+  { name: 'Quotation', filter: (invoice) => invoice.quotation }
 ];
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
+
+// Helper function to format date to YYYY-MM-DD
+const formatDateForInput = (date: Date) => {
+  return date.toISOString().split('T')[0];
+};
+
+// Get first and last day of current month
+const getMonthRange = (date: Date) => {
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  return { firstDay, lastDay };
+};
 
 export default function Invoices() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState(0);
-
+  
+  // Date filter states
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [showFilters, setShowFilters] = useState(false);
+  
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -48,30 +62,70 @@ export default function Invoices() {
   const fetchInvoices = async () => {
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const response = await InvoiceApiOperations.getInvoices();
-      setInvoices(response.data.data);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const response = await invoiceOperations.getInvoices();
+      setInvoices(response.data);
       setError(null);
     } catch (err) {
-      console.error("Error fetching invoices:", err);
-      setError("Failed to load invoices. Using demo data.");
+      console.error('Error fetching invoices:', err);
+      setError('Failed to load invoices. Using demo data.');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleMonthChange = (month: string) => {
+    if (month) {
+      const [year, monthNum] = month.split('-');
+      const date = new Date(parseInt(year), parseInt(monthNum) - 1);
+      const { firstDay, lastDay } = getMonthRange(date);
+      setStartDate(formatDateForInput(firstDay));
+      setEndDate(formatDateForInput(lastDay));
+      setSelectedMonth(month);
+    } else {
+      setStartDate('');
+      setEndDate('');
+      setSelectedMonth('');
+    }
+  };
+
+  const clearFilters = () => {
+    setStartDate('');
+    setEndDate('');
+    setSelectedMonth('');
+  };
+
+  const handleExportToExcel = () => {
+    exportService.toExcel(filteredInvoices);
+  };
+
+  const handleExportToPDF = () => {
+    exportService.toPDF(filteredInvoices);
+  };
+
   const filteredInvoices = invoices
     .filter(tabs[selectedTab].filter)
-    .filter(
-      (invoice) =>
-        invoice?.invoiceNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        invoice?.customerDetails?.name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-    );
+    .filter(invoice => {
+      // Text search filter
+      const matchesSearch = invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        invoice.customerDetails.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // Date range filter
+      let matchesDateRange = true;
+      if (startDate && endDate) {
+        const invoiceDate = new Date(invoice.date.split('/').reverse().join('-'));
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        matchesDateRange = invoiceDate >= start && invoiceDate <= end;
+      }
+
+      return matchesSearch && matchesDateRange;
+    });
 
   // Pagination calculations
-  const totalItems = invoices.length;
+  const totalItems = filteredInvoices.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -96,60 +150,21 @@ export default function Invoices() {
     setIsDialogOpen(true);
   };
 
-  const calculateTotal = (products: Invoice["products"]) => {
-    return products.reduce((sum, product) => sum + product.productPrice, 0);
+  const calculateTotal = (products: Invoice['products']) => {
+    return products.reduce((sum, product) => sum + (product.productPrice), 0);
   };
 
   // Calculate total statistics
-  const totalInvoiceValue = invoices.reduce(
-    (sum, invoice) => sum + calculateTotal(invoice.products),
-    0
+  const totalInvoiceValue = invoices.reduce((sum, invoice) => 
+    sum + calculateTotal(invoice.products), 0
   );
-
-const messageEdit = (type: string, data: any) => {
-  const invoice = `https://admin.aquakart.co.in/invoice/${data._id}`;
-  const customerName = data?.customerDetails?.name;
-  const linkType = type === "gst" ? "gst Live Invoice Link" : 
-                   type === "quotation" ? "quotation live link" : 
-                   type === "po" ? "po live link" : "live invoice link";
-
-  const messageType = type ? `Here is your ${linkType} : ${invoice}.` : `Here is your invoice link: ${invoice}.`;
-
-  return `Hello Dear "${customerName}",  
-
-we welcome you to **Aquakart Family**.  
-
-${messageType}  
-
-**Please save contact to access the invoice.**  
-
-We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
-};
-
-  const sendNotification = async (data: any) => {
-    let message = ""
-    const no = data?.customerDetails?.phone;
-    console.log(data);
-    if (data.gst) {
-      message=messageEdit("gst", data._id);
-    } else if (data.po) {
-      message=messageEdit("po", data._id);
-    } else if (data.quotation) {
-      message=messageEdit("quotation", data._id);
-    } else {
-      message=messageEdit("", data._id);
-    }
-    await notificationOperations.sendNotification("token", no , message);
-  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto"></div>
-          <p className="mt-4 text-sm text-gray-500 font-mono">
-            Loading invoices...
-          </p>
+          <p className="mt-4 text-sm text-gray-500 font-mono">Loading invoices...</p>
         </div>
       </div>
     );
@@ -159,9 +174,7 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
     <div>
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h2 className="text-xl font-semibold text-gray-900 font-mono">
-            Invoices
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 font-mono">Invoices</h2>
           <p className="mt-2 text-sm text-gray-700 font-mono">
             Manage customer invoices and payment status
           </p>
@@ -171,7 +184,25 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
             </p>
           )}
         </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex space-x-3">
+          <div className="flex space-x-2">
+            <button
+              onClick={handleExportToExcel}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
+              title="Export to Excel"
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2 text-green-600" />
+              Excel
+            </button>
+            <button
+              onClick={handleExportToPDF}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
+              title="Export to PDF"
+            >
+              <FilePdf className="h-4 w-4 mr-2 text-red-600" />
+              PDF
+            </button>
+          </div>
           <button
             type="button"
             onClick={handleAdd}
@@ -191,12 +222,8 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
               <FileText className="h-6 w-6 text-cyan-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">
-                Total Invoices
-              </p>
-              <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
-                {invoices.length}
-              </h3>
+              <p className="text-sm font-medium text-gray-500 font-mono">Total Invoices</p>
+              <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">{invoices.length}</h3>
             </div>
           </div>
           <div className="mt-4">
@@ -219,9 +246,7 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
               <IndianRupee className="h-6 w-6 text-green-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">
-                Total Value
-              </p>
+              <p className="text-sm font-medium text-gray-500 font-mono">Total Value</p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
                 ₹{totalInvoiceValue.toLocaleString()}
               </h3>
@@ -239,36 +264,102 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
       </div>
 
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
-        <div className="mt-6 flex items-center space-x-6">
-          <div className="max-w-md flex-1">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search invoices..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 pl-10 pr-3 py-3 text-base placeholder-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
-              />
+        <div className="mt-6 space-y-4">
+          {/* Search and Filter Bar */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <div className="w-full sm:w-96">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search invoices..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="block w-full rounded-lg border border-gray-300 pl-10 pr-3 py-3 text-base placeholder-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
+                />
+              </div>
             </div>
+
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              {showFilters ? 'Hide Filters' : 'Show Filters'}
+            </button>
+
+            <Tab.List className="flex space-x-2 rounded-lg bg-gray-100 p-1">
+              {tabs.map((tab, index) => (
+                <Tab
+                  key={tab.name}
+                  className={({ selected }) =>
+                    classNames(
+                      'rounded-md px-3 py-2 text-sm font-medium font-mono',
+                      selected
+                        ? 'bg-white text-cyan-700 shadow'
+                        : 'text-gray-500 hover:text-gray-700'
+                    )
+                  }
+                >
+                  {tab.name}
+                </Tab>
+              ))}
+            </Tab.List>
           </div>
-          <Tab.List className="flex space-x-2 rounded-lg bg-gray-100 p-1">
-            {tabs.map((tab, index) => (
-              <Tab
-                key={tab.name}
-                className={({ selected }) =>
-                  classNames(
-                    "rounded-md px-3 py-2 text-sm font-medium font-mono",
-                    selected
-                      ? "bg-white text-cyan-700 shadow"
-                      : "text-gray-500 hover:text-gray-700"
-                  )
-                }
-              >
-                {tab.name}
-              </Tab>
-            ))}
-          </Tab.List>
+
+          {/* Date Filters */}
+          {showFilters && (
+            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">Month</label>
+                  <input
+                    type="month"
+                    value={selectedMonth}
+                    onChange={(e) => handleMonthChange(e.target.value)}
+                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">Start Date</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      setSelectedMonth('');
+                    }}
+                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                      setSelectedMonth('');
+                    }}
+                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={clearFilters}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
+                >
+                  Clear Filters
+                </button>
+                <button
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
+                >
+                  Apply Filter
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <Tab.Panels className="mt-4">
@@ -276,8 +367,8 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
             <Tab.Panel
               key={idx}
               className={classNames(
-                "rounded-xl bg-white",
-                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
+                'rounded-xl bg-white',
+                'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60'
               )}
             >
               <div className="mt-4 flex flex-col">
@@ -287,7 +378,6 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
                       <InvoiceList
                         invoices={currentInvoices}
                         onEdit={handleEdit}
-                        onSend={sendNotification}
                         calculateTotal={calculateTotal}
                       />
                     </div>

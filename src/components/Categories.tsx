@@ -2,9 +2,9 @@
 
 import { useState, Fragment, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
-import CategoryOperations from '@/services/category';
 import { Dialog, Transition } from '@headlessui/react';
 import SubCategories from './SubCategories';
+import CategoryOperations from '@/services/category';
 
 interface CategoryPhoto {
   id: string;
@@ -214,14 +214,18 @@ export default function Categories() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   const fetchCategories = async () => {
-    const result = await CategoryOperations.getCategories();
-    setCategories(result.data.data);
+    try {
+      const response = await CategoryOperations.getCategories();
+      setCategories(response.data.data);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
   }
+  useEffect(() => {
+   fetchCategories();
+  }, []);
 
   const filteredCategories = categories.filter(category =>
     category.title.toLowerCase().includes(searchTerm.toLowerCase())
