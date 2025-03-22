@@ -173,6 +173,9 @@ const dummyInvoices: Invoice[] = [
 export const invoiceOperations = {
   getInvoices: async (): Promise<{ data: Invoice[] }> => {
     try {
+      // Use dummy data instead of making an API call that could cause cloning errors
+      // return { data: [...dummyInvoices] };
+      
      
       const response = await axios.get<{ data: Invoice[] }>(`${BASE_URL}/crm/admin/all-invoices`);
       return {

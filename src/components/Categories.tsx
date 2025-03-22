@@ -4,7 +4,6 @@ import { useState, Fragment, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
 import SubCategories from './SubCategories';
-import CategoryOperations from '@/services/category';
 
 interface CategoryPhoto {
   id: string;
@@ -296,17 +295,9 @@ export default function Categories() {
         }
       ]
     };
-    fetchCategories()
-  }, []);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await CategoryOperations.getCategories();
-      setCategories(response.data.data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  }
+    setCategories(mockApiResponse.data);
+  }, []);
 
   const filteredCategories = categories.filter(category =>
     category.title.toLowerCase().includes(searchTerm.toLowerCase())

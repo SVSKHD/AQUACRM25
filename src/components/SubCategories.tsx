@@ -3,7 +3,6 @@
 import { useState, Fragment, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, GitFork } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
-import SubCategoryOperations from '@/services/sub-Category';
 
 interface SubCategoryPhoto {
   id: string;
@@ -283,10 +282,9 @@ export default function SubCategories() {
     try {
       setLoading(true);
       setError(null);
-      const response = await SubCategoryOperations.getSubCategories();
-      setSubCategories(response.data.data);
+      
       // Use mock data instead of actual API call
-      // setSubCategories(mockSubCategories.data);
+      setSubCategories(mockSubCategories.data);
     } catch (err) {
       console.error('Error fetching subcategories:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch subcategories');

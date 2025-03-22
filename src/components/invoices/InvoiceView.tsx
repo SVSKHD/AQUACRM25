@@ -4,7 +4,6 @@ import { Package, Building, Phone, Mail, MapPin, Download, FileText, Calendar, I
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { Invoice } from '@/services/invoices';
-import InvoiceApiOperations from '@/services/invoice';
 
 export default function InvoiceView() {
   const { id } = useParams<{ id: string }>();
@@ -17,75 +16,61 @@ export default function InvoiceView() {
     // In a real app, fetch the specific invoice
     // For demo, we'll use mock data
     setLoading(true);
+    const mockInvoice: Invoice = {
+      _id: id || '1',
+      invoiceNo: `INV-2025-${id || '001'}`,
+      date: '15/03/2025',
+      customerDetails: {
+        name: 'John Doe',
+        phone: 9876543210,
+        email: 'john@example.com',
+        address: '123 Main St, City'
+      },
+      gst: true,
+      po: false,
+      quotation: false,
+      gstDetails: {
+        gstName: 'John Doe Enterprises',
+        gstNo: 'GST123456789',
+        gstPhone: null,
+        gstEmail: 'accounts@johndoe.com',
+        gstAddress: '123 Business Park'
+      },
+      products: [
+        {
+          productName: 'Water Softener',
+          productQuantity: 1,
+          productPrice: 15000,
+          productSerialNo: 'WS-001'
+        },
+        {
+          productName: 'Installation Kit',
+          productQuantity: 1,
+          productPrice: 1500,
+          productSerialNo: 'IK-001'
+        },
+        {
+          productName: 'Filter Cartridge',
+          productQuantity: 2,
+          productPrice: 2000,
+          productSerialNo: 'FC-001,FC-002'
+        }
+      ],
+      transport: {
+        deliveredBy: 'not_delivered',
+        deliveryDate: '2025-03-20'
+      },
+      paidStatus: 'paid',
+      aquakartOnlineUser: false,
+      aquakartInvoice: true,
+      paymentType: 'upi'
+    };
 
-    fetchInvoiceId()    // const mockInvoice: Invoice = {
-    //   _id: id || '1',
-    //   invoiceNo: `INV-2025-${id || '001'}`,
-    //   date: '15/03/2025',
-    //   customerDetails: {
-    //     name: 'John Doe',
-    //     phone: 9876543210,
-    //     email: 'john@example.com',
-    //     address: '123 Main St, City'
-    //   },
-    //   gst: true,
-    //   po: false,
-    //   quotation: false,
-    //   gstDetails: {
-    //     gstName: 'John Doe Enterprises',
-    //     gstNo: 'GST123456789',
-    //     gstPhone: null,
-    //     gstEmail: 'accounts@johndoe.com',
-    //     gstAddress: '123 Business Park'
-    //   },
-    //   products: [
-    //     {
-    //       productName: 'Water Softener',
-    //       productQuantity: 1,
-    //       productPrice: 15000,
-    //       productSerialNo: 'WS-001'
-    //     },
-    //     {
-    //       productName: 'Installation Kit',
-    //       productQuantity: 1,
-    //       productPrice: 1500,
-    //       productSerialNo: 'IK-001'
-    //     },
-    //     {
-    //       productName: 'Filter Cartridge',
-    //       productQuantity: 2,
-    //       productPrice: 2000,
-    //       productSerialNo: 'FC-001,FC-002'
-    //     }
-    //   ],
-    //   transport: {
-    //     deliveredBy: 'not_delivered',
-    //     deliveryDate: '2025-03-20'
-    //   },
-    //   paidStatus: 'paid',
-    //   aquakartOnlineUser: false,
-    //   aquakartInvoice: true,
-    //   paymentType: 'upi'
-    // };
-
-
-
-   
+    setTimeout(() => {
+      setInvoice(mockInvoice);
+      setLoading(false);
+    }, 1000);
   }, [id]);
-
-  const fetchInvoiceId = async () => {
-  try {
-    const invoice = await InvoiceApiOperations.getInvoiceById(id)
-     setTimeout(() => {
-       setInvoice(invoice.data);
-       setLoading(false);
-     }, 1000);
-  } catch (error) {
-    console.error('Error fetching invoice:', error)
-    setError('An error occurred while fetching the invoice')
-    setLoading(false)
-  }
-  }
 
   const handleDownloadPDF = () => {
     if (!invoice) return;
@@ -166,7 +151,7 @@ export default function InvoiceView() {
   }
 
   const calculateSubtotal = () => {
-    return invoice.products.reduce((sum, product) => sum + (product.productPrice), 0);
+    return invoice.products.reduce((sum, product) => sum + (product.productPrice * product.productQuantity), 0);
   };
 
   const calculateGST = () => {
@@ -177,17 +162,6 @@ export default function InvoiceView() {
   const calculateTotal = () => {
     return calculateSubtotal() + calculateGST();
   };
-
-   const gstValueGenerate = (price:number) => {
-     let basePrice = Math.floor(price * 0.8474594);
-     let gst = Math.floor(basePrice * 0.18);
-     return gst;
-   };
-
-   const BasePrice = (price:number) => {
-     let basePrice = Math.floor(price * 0.8474594);
-     return basePrice;
-   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -229,20 +203,12 @@ export default function InvoiceView() {
                 </div>
                 <div className="flex items-center justify-end text-cyan-100">
                   <Receipt className="h-4 w-4 mr-2" />
-                  <p>{invoice.gst ? "GST Invoice" : "Regular Invoice"}</p>
+                  <p>{invoice.gst ? 'GST Invoice' : 'Regular Invoice'}</p>
                 </div>
                 <div className="flex items-center justify-end">
                   <Truck className="h-4 w-4 mr-2" />
-                  <p
-                    className={
-                      invoice.transport.deliveredBy === "delivered"
-                        ? "text-green-200"
-                        : "text-red-200"
-                    }
-                  >
-                    {invoice.transport.deliveredBy === "delivered"
-                      ? "Delivered"
-                      : "Not Delivered"}
+                  <p className={invoice.transport.deliveredBy === 'delivered' ? 'text-green-200' : 'text-red-200'}>
+                    {invoice.transport.deliveredBy === 'delivered' ? 'Delivered' : 'Not Delivered'}
                   </p>
                 </div>
               </div>
@@ -254,9 +220,7 @@ export default function InvoiceView() {
             {/* Customer and GST Details */}
             <div className="grid grid-cols-2 gap-8 mb-8">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Customer Details
-                </h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Customer Details</h2>
                 <div className="space-y-2">
                   <div className="flex items-center text-gray-600">
                     <Building className="h-4 w-4 mr-2" />
@@ -279,17 +243,14 @@ export default function InvoiceView() {
 
               {invoice.gst && (
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                    GST Details
-                  </h2>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">GST Details</h2>
                   <div className="space-y-2">
                     <div className="flex items-center text-gray-600">
                       <Building className="h-4 w-4 mr-2" />
                       <span>{invoice.gstDetails.gstName}</span>
                     </div>
                     <div className="text-gray-600">
-                      <span className="font-medium">GST No:</span>{" "}
-                      {invoice.gstDetails.gstNo}
+                      <span className="font-medium">GST No:</span> {invoice.gstDetails.gstNo}
                     </div>
                     {invoice.gstDetails.gstPhone && (
                       <div className="flex items-center text-gray-600">
@@ -312,32 +273,16 @@ export default function InvoiceView() {
 
             {/* Products */}
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Products
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Products</h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="bg-gray-50">
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Product
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Serial No
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Quantity
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Base Price
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Gst
-                      </th>
-                   
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total
-                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial No</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -346,9 +291,7 @@ export default function InvoiceView() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <Package className="h-5 w-5 text-gray-400 mr-2" />
-                            <span className="text-gray-900">
-                              {product.productName}
-                            </span>
+                            <span className="text-gray-900">{product.productName}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-500">
@@ -358,14 +301,10 @@ export default function InvoiceView() {
                           {product.productQuantity}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-gray-500">
-                          ₹{BasePrice(product.productPrice).toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-gray-500">
-                          ₹{gstValueGenerate(product.productPrice).toLocaleString()}
-                        </td>
-                     
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-medium">
                           ₹{product.productPrice.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-medium">
+                          ₹{(product.productPrice * product.productQuantity).toLocaleString()}
                         </td>
                       </tr>
                     ))}
@@ -378,7 +317,10 @@ export default function InvoiceView() {
             <div className="border-t border-gray-200 pt-8">
               <div className="w-full max-w-sm ml-auto">
                 <div className="space-y-3">
-                
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span>₹{calculateSubtotal().toLocaleString()}</span>
+                  </div>
                   {invoice.gst && (
                     <div className="flex justify-between text-gray-600">
                       <span>GST (18%)</span>
@@ -397,20 +339,15 @@ export default function InvoiceView() {
             <div className="mt-8 pt-8 border-t border-gray-200">
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">
-                    Payment Status
-                  </h3>
-                  <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      invoice.paidStatus === "paid"
-                        ? "bg-green-100 text-green-800"
-                        : invoice.paidStatus === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {invoice.paidStatus.charAt(0).toUpperCase() +
-                      invoice.paidStatus.slice(1)}
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">Payment Status</h3>
+                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    invoice.paidStatus === 'paid'
+                      ? 'bg-green-100 text-green-800'
+                      : invoice.paidStatus === 'pending'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {invoice.paidStatus.charAt(0).toUpperCase() + invoice.paidStatus.slice(1)}
                   </span>
                   {invoice.paymentType && (
                     <p className="mt-1 text-sm text-gray-500">
@@ -419,19 +356,12 @@ export default function InvoiceView() {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">
-                    Delivery Details
-                  </h3>
+                  <h3 className="text-sm font-medium text-gray-900 mb-2">Delivery Details</h3>
                   <p className="text-sm text-gray-500">
-                    Status:{" "}
-                    {invoice.transport.deliveredBy === "delivered" ? (
-                      <span className="text-green-600 font-medium">
-                        Delivered
-                      </span>
+                    Status: {invoice.transport.deliveredBy === 'delivered' ? (
+                      <span className="text-green-600 font-medium">Delivered</span>
                     ) : (
-                      <span className="text-red-600 font-medium">
-                        Not Delivered
-                      </span>
+                      <span className="text-red-600 font-medium">Not Delivered</span>
                     )}
                   </p>
                   <p className="text-sm text-gray-500">
@@ -443,12 +373,10 @@ export default function InvoiceView() {
 
             {/* Product Recommendations */}
             <div className="mt-12 pt-8 border-t border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                Recommended Products
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">Recommended Products</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Water Softener Card */}
-                <a
+                <a 
                   href="https://aquakart.co.in/products/kent-water-softener"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -462,16 +390,10 @@ export default function InvoiceView() {
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-cyan-600">
-                      Kent Water Softener
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Protect your appliances from hard water damage
-                    </p>
+                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-cyan-600">Kent Water Softener</h4>
+                    <p className="mt-1 text-sm text-gray-500">Protect your appliances from hard water damage</p>
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-lg font-semibold text-gray-900">
-                        ₹14,000
-                      </span>
+                      <span className="text-lg font-semibold text-gray-900">₹14,000</span>
                       <span className="inline-flex items-center rounded-full bg-cyan-100 px-2.5 py-0.5 text-xs font-medium text-cyan-800">
                         Best Seller
                       </span>
@@ -480,7 +402,7 @@ export default function InvoiceView() {
                 </a>
 
                 {/* RO System Card */}
-                <a
+                <a 
                   href="https://aquakart.co.in/products/kent-grand-plus"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -494,16 +416,10 @@ export default function InvoiceView() {
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-cyan-600">
-                      Kent Grand Plus RO
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Pure and safe drinking water for your family
-                    </p>
+                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-cyan-600">Kent Grand Plus RO</h4>
+                    <p className="mt-1 text-sm text-gray-500">Pure and safe drinking water for your family</p>
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-lg font-semibold text-gray-900">
-                        ₹18,500
-                      </span>
+                      <span className="text-lg font-semibold text-gray-900">₹18,500</span>
                       <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         New Arrival
                       </span>
@@ -512,7 +428,7 @@ export default function InvoiceView() {
                 </a>
 
                 {/* Filter Cartridge Card */}
-                <a
+                <a 
                   href="https://aquakart.co.in/products/kent-filter-cartridge"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -526,16 +442,10 @@ export default function InvoiceView() {
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-cyan-600">
-                      Filter Cartridge Set
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Regular maintenance for optimal performance
-                    </p>
+                    <h4 className="text-lg font-medium text-gray-900 group-hover:text-cyan-600">Filter Cartridge Set</h4>
+                    <p className="mt-1 text-sm text-gray-500">Regular maintenance for optimal performance</p>
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-lg font-semibold text-gray-900">
-                        ₹2,000
-                      </span>
+                      <span className="text-lg font-semibold text-gray-900">₹2,000</span>
                       <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
                         Essential
                       </span>
@@ -552,18 +462,8 @@ export default function InvoiceView() {
                   className="inline-flex items-center text-sm font-medium text-cyan-600 hover:text-cyan-800"
                 >
                   View all products on Aquakart
-                  <svg
-                    className="ml-2 h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
+                  <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </a>
               </div>
