@@ -79,11 +79,51 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
     }
   };
 
-  useEffect(() => {
-    if (invoice) {
-      setFormData(invoice);
-    }
-  }, [invoice]);
+ useEffect(() => {
+   if (isOpen) {
+     if (invoice) {
+       setFormData(invoice);
+     } else {
+       setFormData({
+         invoiceNo: "",
+         date: new Date().toLocaleDateString("en-GB"),
+         customerDetails: {
+           name: "",
+           phone: 0,
+           email: "",
+           address: "",
+         },
+         gst: false,
+         po: false,
+         quotation: false,
+         gstDetails: {
+           gstName: "",
+           gstNo: "",
+           gstPhone: null,
+           gstEmail: "",
+           gstAddress: "",
+         },
+         products: [],
+         transport: {
+           deliveredBy: "not_delivered",
+           deliveryDate: "",
+         },
+         paidStatus: "",
+         aquakartOnlineUser: false,
+         aquakartInvoice: false,
+         paymentType: "",
+       });
+     }
+     // Also reset the newProduct form state
+     setNewProduct({
+       productName: "",
+       productQuantity: 1,
+       productPrice: 0,
+       productSerialNo: "",
+     });
+   }
+ }, [isOpen, invoice]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,7 +198,7 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                         value={formData.invoiceNo}
                         onChange={(e) => setFormData({ ...formData, invoiceNo: e.target.value })}
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                        required
+                        
                       />
                     </div>
                     <div>
@@ -207,7 +247,7 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                         <input
-                          type="email"
+                          type="text"
                           value={formData.customerDetails?.email}
                           onChange={(e) => setFormData({
                             ...formData,

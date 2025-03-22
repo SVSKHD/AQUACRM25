@@ -1,6 +1,10 @@
 import axios from "axios";
 
 const BASE_URL = "https://api.aquakart.co.in/v1";
+const headers = {
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("token")}`
+}
 
 interface GSTDetails {
   gstName: string;
@@ -201,20 +205,20 @@ export const invoiceOperations = {
   createInvoice: async (invoice: Partial<Invoice>): Promise<Invoice> => {
     try {
       // For demo purposes, return a mock response
-      const newInvoice = {
-        ...sanitizeInvoiceData(invoice),
-        _id: Math.random().toString(36).substring(2, 15),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      } as Invoice;
+      // const newInvoice = {
+      //   ...sanitizeInvoiceData(invoice),
+      //   _id: Math.random().toString(36).substring(2, 15),
+      //   createdAt: new Date().toISOString(),
+      //   updatedAt: new Date().toISOString()
+      // } as Invoice;
       
-      return newInvoice;
+      // return newInvoice;
       
-      /* Commented out actual API call
+      
       const sanitizedData = sanitizeInvoiceData(invoice);
-      const response = await axios.post<Invoice>(`${BASE_URL}/crm/admin/create-invoice`, sanitizedData);
+      const response = await axios.post<Invoice>(`${BASE_URL}/crm/admin/create-invoice`,{headers}, sanitizedData);
       return sanitizeInvoiceData(response.data) as Invoice;
-      */
+      
     } catch (error) {
       console.error('Error creating invoice:', error);
       throw error;
@@ -222,21 +226,13 @@ export const invoiceOperations = {
   },
 
   updateInvoice: async (invoice: Partial<Invoice>): Promise<Invoice> => {
-    try {
-      // For demo purposes, return a mock response
-      return {
-        ...sanitizeInvoiceData(invoice),
-        updatedAt: new Date().toISOString()
-      } as Invoice;
-      
-      /* Commented out actual API call
+    try {   
       const sanitizedData = sanitizeInvoiceData(invoice);
       const response = await axios.put<Invoice>(
-        `${BASE_URL}/crm/admin/update-invoice/${invoice._id}`,
+        `${BASE_URL}/crm/admin/update-invoice/${invoice._id}`, {headers},
         sanitizedData
       );
       return sanitizeInvoiceData(response.data) as Invoice;
-      */
     } catch (error) {
       console.error('Error updating invoice:', error);
       throw error;
@@ -245,12 +241,7 @@ export const invoiceOperations = {
 
   deleteInvoice: async (invoiceId: string): Promise<void> => {
     try {
-      // For demo purposes, just log the deletion
-      console.log(`Invoice ${invoiceId} would be deleted in production`);
-      
-      /* Commented out actual API call
       await axios.delete(`${BASE_URL}/crm/admin/delete-invoice/${invoiceId}`);
-      */
     } catch (error) {
       console.error('Error deleting invoice:', error);
       throw error;
