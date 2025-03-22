@@ -379,6 +379,7 @@ export default function Invoices() {
                         invoices={currentInvoices}
                         onEdit={handleEdit}
                         calculateTotal={calculateTotal}
+                        onDelete={fetchInvoices}
                       />
                     </div>
                   </div>

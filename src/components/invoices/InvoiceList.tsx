@@ -7,7 +7,7 @@ import { invoiceOperations, type Invoice } from '@/services/invoices';
 interface InvoiceListProps {
   invoices: Invoice[];
   onEdit: (invoice: Invoice) => void;
-  onDelete?: (invoice: Invoice) => void;
+  onDelete: () => void;
   calculateTotal: (products: Invoice["products"]) => number;
 }
 
@@ -115,10 +115,11 @@ export default function InvoiceList({ invoices, onEdit, calculateTotal, onDelete
     console.log("Invoice selected for deletion:", invoice);
   };
 
-const handleDeleteConfirm = async() => {
+const handleDeleteConfirm = async () => {
   if (selectedInvoice) {
-    const response= await invoiceOperations.deleteInvoice(selectedInvoice._id);
-    console.log("Invoice deleted:", response);
+    await invoiceOperations.deleteInvoice(selectedInvoice._id);
+    console.log("Invoice deleted");
+    onDelete(); // Refresh invoices after deletion
   } else {
     console.warn("No invoice selected for deletion!");
   }
@@ -126,6 +127,7 @@ const handleDeleteConfirm = async() => {
   setIsDeleteDialogOpen(false);
   setSelectedInvoice(null);
 };
+
 
 
 
