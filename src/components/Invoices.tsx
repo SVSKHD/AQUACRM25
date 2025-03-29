@@ -16,6 +16,8 @@ import { exportService } from "@/services/export";
 import InvoiceDialog from "./invoices/InvoiceDialog";
 import InvoiceList from "./invoices/InvoiceList";
 import PaginationControls from "./invoices/PaginationControls";
+import NotifyOperations from "@/services/notify";
+import {toast} from "@/components/ui/toast";
 
 interface TabItem {
   name: string;
@@ -152,6 +154,27 @@ export default function Invoices() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+  const handleSend = (id:any) => {
+    const invoiceId = id._id
+    const invoice = `https://admin.aquakart.co.in/invoice/${invoiceId}`;
+    const message = `Hello Dear "${id.customerDetails.name}",  
+we welcome you to **Aquakart Family**.  
+
+Here is your live invoice link: ${invoice}.  
+
+**Please save contact to access the invoice.**  
+
+We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
+    NotifyOperations.sendWhatsApp(id?.customerDetails.phone, message).then((res)=>{
+      if(res){
+        toast.success("succesfully Sent Invoice")
+      }
+    })
+    .catch((err)=>{
+      toast.error("something problem", err)
+    })
+  }
 
   const handleItemsPerPageChange = (value: number) => {
     setItemsPerPage(value);

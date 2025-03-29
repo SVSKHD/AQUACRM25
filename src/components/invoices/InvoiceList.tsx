@@ -12,7 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { invoiceOperations, type Invoice } from "@/services/invoices";
-
+import { toast } from "@/components/ui/toast";
 interface InvoiceListProps {
   invoices: Invoice[];
   onEdit: (invoice: Invoice) => void;
@@ -127,9 +127,10 @@ export default function InvoiceList({
   const handleDeleteConfirm = async () => {
     if (selectedInvoice) {
       await invoiceOperations.deleteInvoice(selectedInvoice._id);
-      console.log("Invoice deleted");
+      toast.success("Invoice deleted successfully")
       onDelete(); // Refresh invoices after deletion
     } else {
+      toast.error("please try again");
       console.warn("No invoice selected for deletion!");
     }
 

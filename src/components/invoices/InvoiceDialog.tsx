@@ -3,7 +3,7 @@ import { X, Package } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import type { Invoice, Product } from "@/services/invoices";
 import invoiceOperations from "@/services/invoice";
-
+import { toast } from "@/components/ui/toast";
 interface InvoiceDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -133,21 +133,33 @@ export default function InvoiceDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (invoice) {
-      console.log("Updating invoice:", formData);
-      const updatedInvoice = await invoiceOperations.updateInvoice(
-        formData,
-        invoice._id,
-      );
-    } else {
-      console.log("Creating invoice:", formData);
-      const invoice = await invoiceOperations.createInvoice(formData);
+    try {
+      if (invoice) {
+        const res = await invoiceOperations.updateInvoice(formData, invoice._id);
+        console.log("Updated invoice:", res?._id);
+        toast.success("Invoice updated successfully", {
+          description: "The invoice has been updated.",
+        });
+      } else {
+        const res = await invoiceOperations.createInvoice(formData);
+        console.log("Created invoice:", res?._id);
+        toast.success("Invoice created successfully", {
+          description: "The invoice has been created.",
+        });
+      }
+    } catch (err) {
+      toast.error("Failed to process invoice", {
+        description: "Please try again later.",
+      });
     }
 
-    onClose();
-    if (refresh) {
-      refresh();
-    }
+    // Delay closing to ensure toast renders
+    setTimeout(() => {
+      onClose();
+      if (refresh) {
+        refresh();
+      }
+    }, 500);
   };
 
   const addProduct = () => {
