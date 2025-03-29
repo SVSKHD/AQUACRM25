@@ -1,8 +1,8 @@
 import { useState, Fragment, useEffect } from 'react';
 import { X, Package } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
-import type { Invoice, Product } from '@/services/invoices';
-import { invoiceOperations } from '@/services/invoices';
+import type {Invoice, Product } from '@/services/invoices';
+import invoiceOperations from '@/services/invoice';
 
 interface InvoiceDialogProps {
   isOpen: boolean;
@@ -131,7 +131,9 @@ export default function InvoiceDialog({ isOpen, onClose, invoice = null }: Invoi
     if (invoice){
       console.log("Updating invoice:", formData);
     }else{
-      const invoice = await invoiceOperations.createInvoice(formData as Invoice);
+      console.log("Creating invoice:", formData);
+      const invoice = await invoiceOperations.createInvoice(formData);
+      console.log("Created invoice:", invoice);
       
       console.log("Submitting form data createa:", formData);
     }

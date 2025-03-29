@@ -83,6 +83,24 @@ export default function InvoiceView() {
     }
   }
 
+  const gstValueGenerate = (price: number) => {
+    let basePrice = Math.floor(price * 0.8474594);
+    let gst = Math.floor(basePrice * 0.18);
+    return gst;
+  };
+
+  const BasePrice = (price: number) => {
+    let basePrice = Math.floor(price * 0.8474594);
+    return basePrice;
+  };
+
+  const calculateSubtotal = () => {
+    return invoice?.products.reduce(
+      (sum, product) => sum + product.productPrice,
+      0
+    );
+  };
+
 const handleDownloadPDF = () => {
   if (!invoice) return;
 
@@ -97,9 +115,9 @@ const handleDownloadPDF = () => {
 
     // Top-right Aquakart and GST
     doc.setFontSize(18);
-    doc.text("Aquakart", 135, 30);
+    doc.text("Aquakart", 135, 20);
     doc.setFontSize(10);
-    doc.text("GST: 36AJOPH6387A1Z2", 135, 35);
+    doc.text("GST: 36AJOPH6387A1Z2", 135, 25);
 
     // Invoice No & Date
     doc.setFontSize(10);
@@ -109,21 +127,36 @@ const handleDownloadPDF = () => {
     // Customer & GST Details Side by Side
     doc.setFontSize(12);
     doc.text("Customer Details", 15, 45);
-    doc.text("GST Details", 110, 45);
+    
 
     doc.setFontSize(10);
     // Customer Details
     doc.text(`Name: ${invoice.customerDetails.name}`, 15, 55);
     doc.text(`Phone: ${invoice.customerDetails.phone}`, 15, 60);
     doc.text(`Email: ${invoice.customerDetails.email}`, 15, 65);
-    doc.text(`Address: ${invoice.customerDetails.address}`, 15, 70);
+    const customerAddressLines = doc.splitTextToSize(
+      `Address: ${invoice.customerDetails.address}`,
+      90
+    );
+    customerAddressLines.forEach((line, idx) => {
+      doc.text(line, 15, 70 + idx * 5);
+    });
 
     // GST Details
     if (invoice.gst) {
+      doc.text("GST Details", 110, 45);
       doc.text(`GST Name: ${invoice.gstDetails.gstName}`, 110, 55);
       doc.text(`GST No: ${invoice.gstDetails.gstNo}`, 110, 60);
-      doc.text(`Email: ${invoice.gstDetails.gstEmail}`, 110, 65);
-      doc.text(`Address: ${invoice.gstDetails.gstAddress}`, 110, 70);
+      doc.text(`GST Email: ${invoice.gstDetails.gstEmail}`, 110, 65);
+    
+      const gstAddressLines = invoice.gstDetails.gstAddress
+        ? invoice.gstDetails.gstAddress.split("\n")
+        : [];
+      doc.text("Address:", 110, 70);
+      gstAddressLines.forEach((line, idx) => {
+        doc.text(line, 115, 75 + idx * 5);
+      });
+
     }
 
     // Adjust startY closer
@@ -156,17 +189,19 @@ const handleDownloadPDF = () => {
     }
 
     // Products Table
-    const tableData = invoice.products.map((product) => [
-      product.productName,
-      product.productSerialNo,
-      product.productQuantity,
-      `₹${product.productPrice.toLocaleString()}`,
-      `₹${(product.productPrice * product.productQuantity).toLocaleString()}`,
-    ]);
+   const tableData = invoice.products.map((product) => [
+     product.productName,
+     product.productSerialNo,
+     product.productQuantity,
+     `Rs.${BasePrice(product.productPrice).toLocaleString()}`,
+     `Rs.${gstValueGenerate(product.productPrice).toLocaleString()}`,
+     `Rs.${product.productPrice.toLocaleString()}`,
+   ]);
+
 
     autoTable(doc, {
       startY: startY,
-      head: [["Product", "Serial No", "Qty", "Price", "Total"]],
+      head: [["Product", "Serial No", "Qty", "BasePrice","GST",  "Total"]],
       body: tableData,
       styles: { fontSize: 8 },
       headStyles: { fillColor: [0, 120, 200], textColor: 255 },
@@ -246,23 +281,7 @@ const handleDownloadPDF = () => {
   }
 
 
-   const gstValueGenerate = (price) => {
-     let basePrice = Math.floor(price * 0.8474594);
-     let gst = Math.floor(basePrice * 0.18);
-     return gst;
-   };
-
-   const BasePrice = (price:number) => {
-     let basePrice = Math.floor(price * 0.8474594);
-     return basePrice;
-   };
-
-  const calculateSubtotal = () => {
-    return invoice.products.reduce(
-      (sum, product) => sum + product.productPrice,
-      0
-    );
-  };
+   
 
   const calculateGST = () => {
     const subtotal = calculateSubtotal();

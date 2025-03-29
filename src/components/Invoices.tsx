@@ -408,6 +408,7 @@ export default function Invoices() {
         onClose={() => {
           setIsDialogOpen(false);
           setSelectedInvoice(null);
+          fetchInvoices();
         }}
         invoice={selectedInvoice}
       />

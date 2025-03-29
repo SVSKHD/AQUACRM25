@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const BASE_URL = "https://api.aquakart.co.in/v1";
 const headers = {
   "Content-Type": "application/json",
@@ -179,22 +180,26 @@ export const invoiceOperations = {
     try {
       // Use dummy data instead of making an API call that could cause cloning errors
       // return { data: [...dummyInvoices] };
-      
-     
-      const response = await axios.get<{ data: Invoice[] }>(`${BASE_URL}/crm/admin/all-invoices`);
+
+      const response = await axios.get<{ data: Invoice[] }>(
+        `${BASE_URL}/crm/admin/all-invoices`
+      );
       return {
-        data: response.data.data.map(invoice => sanitizeInvoiceData(invoice) as Invoice)
+        data: response.data.data.map(
+          (invoice) => sanitizeInvoiceData(invoice) as Invoice
+        ),
       };
-      
     } catch (error) {
-      console.error('Error fetching invoices:', error);
+      console.error("Error fetching invoices:", error);
       return { data: [] };
     }
   },
 
   getInvoiceById: async (invoiceId: any): Promise<Invoice | null> => {
     try {
-      const response = await axios.get<Invoice>(`${BASE_URL}/crm/invoice/${invoiceId}`);
+      const response = await axios.get<Invoice>(
+        `${BASE_URL}/crm/invoice/${invoiceId}`
+      );
       return response;
     } catch (error) {
       console.error("Error fetching invoices:", error);
@@ -204,49 +209,48 @@ export const invoiceOperations = {
 
   createInvoice: async (invoice: Partial<Invoice>): Promise<Invoice> => {
     try {
-      // For demo purposes, return a mock response
-      // const newInvoice = {
-      //   ...sanitizeInvoiceData(invoice),
-      //   _id: Math.random().toString(36).substring(2, 15),
-      //   createdAt: new Date().toISOString(),
-      //   updatedAt: new Date().toISOString()
-      // } as Invoice;
-      
-      // return newInvoice;
-      
-      
-      const sanitizedData = sanitizeInvoiceData(invoice);
-      const response = await axios.post<Invoice>(`${BASE_URL}/crm/admin/create-invoice`,{headers}, sanitizedData);
-      return sanitizeInvoiceData(response.data) as Invoice;
-      
+      const response = await axios.post(
+        `${BASE_URL}/crm/admin/create-invoice`,
+        invoice,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
     } catch (error) {
-      console.error('Error creating invoice:', error);
+      console.error("Error creating invoice:", error);
       throw error;
     }
   },
 
   updateInvoice: async (invoice: Partial<Invoice>): Promise<Invoice> => {
-    try {   
+    try {
       const sanitizedData = sanitizeInvoiceData(invoice);
       const response = await axios.put<Invoice>(
-        `${BASE_URL}/crm/admin/update-invoice/${invoice._id}`, {headers},
+        `${BASE_URL}/crm/admin/update-invoice/${invoice._id}`,
+        { headers },
         sanitizedData
       );
       return sanitizeInvoiceData(response.data) as Invoice;
     } catch (error) {
-      console.error('Error updating invoice:', error);
+      console.error("Error updating invoice:", error);
       throw error;
     }
   },
 
   deleteInvoice: async (invoiceId: string): Promise<void> => {
     try {
-      await axios.delete(`${BASE_URL}/crm/delete/invoice/${invoiceId}`, {headers});
+      await axios.delete(`${BASE_URL}/crm/delete/invoice/${invoiceId}`, {
+        headers,
+      });
     } catch (error) {
-      console.error('Error deleting invoice:', error);
+      console.error("Error deleting invoice:", error);
       throw error;
     }
-  }
+  },
 };
 
 export type { Invoice, Product, GSTDetails, Transport };
