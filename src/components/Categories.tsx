@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, Fragment, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
-import { Dialog, Transition } from '@headlessui/react';
-import SubCategories from './SubCategories';
-import CategoryOperations from '@/services/category';
+import { useState, Fragment, useEffect } from "react";
+import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import SubCategories from "./SubCategories";
+import CategoryOperations from "@/services/category";
 
 interface CategoryPhoto {
   id: string;
@@ -22,12 +22,20 @@ interface Category {
   updatedAt: string;
 }
 
-function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean; onClose: () => void; category?: Category | null }) {
+function CategoryDialog({
+  isOpen,
+  onClose,
+  category = null,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  category?: Category | null;
+}) {
   const [formData, setFormData] = useState<Partial<Category>>({
-    title: '',
-    description: '',
-    keywords: '',
-    photos: []
+    title: "",
+    description: "",
+    keywords: "",
+    photos: [],
   });
 
   // Update form data when category changes
@@ -37,14 +45,14 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
         title: category.title,
         description: category.description,
         keywords: category.keywords,
-        photos: category.photos
+        photos: category.photos,
       });
     } else {
       setFormData({
-        title: '',
-        description: '',
-        keywords: '',
-        photos: []
+        title: "",
+        description: "",
+        keywords: "",
+        photos: [],
       });
     }
   }, [category]);
@@ -52,7 +60,7 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Submitting form data:', formData);
+    console.log("Submitting form data:", formData);
     onClose();
   };
 
@@ -87,13 +95,15 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {category ? 'Edit Category' : 'Add New Category'}
+                  {category ? "Edit Category" : "Add New Category"}
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   {/* Current Image Preview */}
                   {category && category.photos && category.photos[0] && (
                     <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Current Image
+                      </label>
                       <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
                         <img
                           src={category.photos[0].secure_url}
@@ -106,11 +116,15 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
 
                   {/* Title Input */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Title
+                    </label>
                     <input
                       type="text"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
@@ -118,10 +132,17 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
 
                   {/* Description Input */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={4}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
@@ -132,11 +153,15 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Keywords
-                      <span className="text-gray-500 text-xs ml-2">(One per line)</span>
+                      <span className="text-gray-500 text-xs ml-2">
+                        (One per line)
+                      </span>
                     </label>
                     <textarea
                       value={formData.keywords}
-                      onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, keywords: e.target.value })
+                      }
                       rows={4}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base font-mono text-sm"
                       placeholder="Enter keywords, one per line"
@@ -144,18 +169,21 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
                     {/* Keywords Preview */}
                     {formData.keywords && (
                       <div className="mt-3">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Keywords Preview</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Keywords Preview
+                        </label>
                         <div className="flex flex-wrap gap-2">
-                          {formData.keywords.split('\n').map((keyword, index) => (
-                            keyword.trim() && (
-                              <span
-                                key={index}
-                                className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700"
-                              >
-                                {keyword.trim()}
-                              </span>
-                            )
-                          ))}
+                          {formData.keywords.split("\n").map(
+                            (keyword, index) =>
+                              keyword.trim() && (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700"
+                                >
+                                  {keyword.trim()}
+                                </span>
+                              ),
+                          )}
                         </div>
                       </div>
                     )}
@@ -163,7 +191,9 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
 
                   {/* Image Upload */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Category Image</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category Image
+                    </label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
                         <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
@@ -173,11 +203,18 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
                             className="relative cursor-pointer rounded-md font-medium text-cyan-600 hover:text-cyan-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-cyan-500"
                           >
                             <span>Upload a file</span>
-                            <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                            <input
+                              id="file-upload"
+                              name="file-upload"
+                              type="file"
+                              className="sr-only"
+                            />
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -194,7 +231,7 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
                       type="submit"
                       className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
                     >
-                      {category ? 'Update Category' : 'Create Category'}
+                      {category ? "Update Category" : "Create Category"}
                     </button>
                   </div>
                 </form>
@@ -209,26 +246,27 @@ function CategoryDialog({ isOpen, onClose, category = null }: { isOpen: boolean;
 
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-
 
   const fetchCategories = async () => {
     try {
       const response = await CategoryOperations.getCategories();
       setCategories(response.data.data);
     } catch (error) {
-      console.error('Failed to fetch categories:', error);
+      console.error("Failed to fetch categories:", error);
     }
-  }
+  };
   useEffect(() => {
-   fetchCategories();
+    fetchCategories();
   }, []);
 
-  const filteredCategories = categories.filter(category =>
-    category.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = categories.filter((category) =>
+    category.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleEdit = (category: Category) => {
@@ -242,18 +280,18 @@ export default function Categories() {
   };
 
   const toggleExpand = (categoryId: string) => {
-    setExpandedCategories(prev =>
+    setExpandedCategories((prev) =>
       prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
     );
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -307,8 +345,12 @@ export default function Categories() {
                     />
                   )}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900">{category.title}</h3>
-                    <p className="mt-1 text-sm text-gray-500">{category.description}</p>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {category.title}
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {category.description}
+                    </p>
                     <div className="mt-2">
                       <p className="text-xs text-gray-400">
                         Last updated: {formatDate(category.updatedAt)}
@@ -330,7 +372,7 @@ export default function Categories() {
               </div>
               <div className="mt-4">
                 <div className="flex flex-wrap gap-2">
-                  {category.keywords.split('\n').map((keyword, index) => (
+                  {category.keywords.split("\n").map((keyword, index) => (
                     <span
                       key={index}
                       className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700"
@@ -345,12 +387,16 @@ export default function Categories() {
                   onClick={() => toggleExpand(category._id)}
                   className="text-sm text-cyan-600 hover:text-cyan-700"
                 >
-                  {expandedCategories.includes(category._id) ? 'Hide Subcategories' : 'Show Subcategories'}
+                  {expandedCategories.includes(category._id)
+                    ? "Hide Subcategories"
+                    : "Show Subcategories"}
                 </button>
               </div>
             </div>
             {expandedCategories.includes(category._id) && (
-              <SubCategories categoryId={parseInt(category._id.slice(-6), 16)} />
+              <SubCategories
+                categoryId={parseInt(category._id.slice(-6), 16)}
+              />
             )}
           </div>
         ))}

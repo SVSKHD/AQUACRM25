@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, Fragment, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Package } from 'lucide-react';
-import { Dialog, Transition } from '@headlessui/react';
-import ProductOperations from '@/services/product';
+import { useState, Fragment, useEffect } from "react";
+import { Plus, Search, Edit2, Trash2, Package } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import ProductOperations from "@/services/product";
 
 interface ProductPhoto {
   id: string;
@@ -32,41 +32,51 @@ interface Product {
 
 // Mock data for fallback
 const mockProducts = {
-  "status": true,
-  "data": [
+  status: true,
+  data: [
     {
-      "_id": "65d1bc9f448369ec4b7e1853",
-      "title": "Kent Bathroom Water Softener 5.5L | Aquakart",
-      "discountPriceStatus": false,
-      "price": 14000,
-      "description": "Water quality plays a crucial role in maintaining the longevity and aesthetics of bathroom fittings...",
-      "photos": [
+      _id: "65d1bc9f448369ec4b7e1853",
+      title: "Kent Bathroom Water Softener 5.5L | Aquakart",
+      discountPriceStatus: false,
+      price: 14000,
+      description:
+        "Water quality plays a crucial role in maintaining the longevity and aesthetics of bathroom fittings...",
+      photos: [
         {
-          "id": "products/estxdgyj28uhpizvxhtd",
-          "secure_url": "https://res.cloudinary.com/aquakartproducts/image/upload/v1708244121/products/estxdgyj28uhpizvxhtd.jpg",
-          "_id": "65d1bc9f448369ec4b7e1854"
-        }
+          id: "products/estxdgyj28uhpizvxhtd",
+          secure_url:
+            "https://res.cloudinary.com/aquakartproducts/image/upload/v1708244121/products/estxdgyj28uhpizvxhtd.jpg",
+          _id: "65d1bc9f448369ec4b7e1854",
+        },
       ],
-      "category": "6528debce9e8a06a49a23b2c",
-      "stock": 5,
-      "brand": "Kent",
-      "ratings": 0,
-      "numberOfReviews": 0,
-      "createdAt": "2024-02-18T08:15:20.466Z",
-      "slug": "kent-bathroom-water-softener"
-    }
-  ]
+      category: "6528debce9e8a06a49a23b2c",
+      stock: 5,
+      brand: "Kent",
+      ratings: 0,
+      numberOfReviews: 0,
+      createdAt: "2024-02-18T08:15:20.466Z",
+      slug: "kent-bathroom-water-softener",
+    },
+  ],
 };
 
-function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; onClose: () => void; product?: Product | null }) {
+function ProductDialog({
+  isOpen,
+  onClose,
+  product = null,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  product?: Product | null;
+}) {
   const [formData, setFormData] = useState<Partial<Product>>({
-    title: '',
+    title: "",
     price: 0,
-    description: '',
+    description: "",
     stock: 0,
-    brand: '',
-    keywords: '',
-    category: ''
+    brand: "",
+    keywords: "",
+    category: "",
   });
 
   useEffect(() => {
@@ -78,17 +88,17 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
         stock: product.stock,
         brand: product.brand,
         keywords: product.keywords,
-        category: product.category
+        category: product.category,
       });
     } else {
       setFormData({
-        title: '',
+        title: "",
         price: 0,
-        description: '',
+        description: "",
         stock: 0,
-        brand: '',
-        keywords: '',
-        category: ''
+        brand: "",
+        keywords: "",
+        category: "",
       });
     }
   }, [product]);
@@ -96,7 +106,7 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Submitting form data:', formData);
+    console.log("Submitting form data:", formData);
     onClose();
   };
 
@@ -131,13 +141,15 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {product ? 'Edit Product' : 'Add New Product'}
+                  {product ? "Edit Product" : "Add New Product"}
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   {/* Current Image Preview */}
                   {product && product.photos && product.photos[0] && (
                     <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Current Image
+                      </label>
                       <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
                         <img
                           src={product.photos[0].secure_url}
@@ -149,54 +161,83 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
                   )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Title
+                    </label>
                     <input
                       type="text"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Brand
+                    </label>
                     <input
                       type="text"
                       value={formData.brand}
-                      onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, brand: e.target.value })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Price
+                    </label>
                     <input
                       type="number"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          price: parseFloat(e.target.value),
+                        })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Stock
+                    </label>
                     <input
                       type="number"
                       value={formData.stock}
-                      onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stock: parseInt(e.target.value),
+                        })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={4}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
@@ -204,10 +245,14 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Keywords
+                    </label>
                     <textarea
                       value={formData.keywords}
-                      onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, keywords: e.target.value })
+                      }
                       rows={3}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       placeholder="Enter keywords, one per line"
@@ -215,7 +260,9 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Images</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Images
+                    </label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
                         <svg
@@ -238,11 +285,19 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
                             className="relative cursor-pointer rounded-md font-medium text-cyan-600 hover:text-cyan-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-cyan-500"
                           >
                             <span>Upload files</span>
-                            <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple />
+                            <input
+                              id="file-upload"
+                              name="file-upload"
+                              type="file"
+                              className="sr-only"
+                              multiple
+                            />
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -259,7 +314,7 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
                       type="submit"
                       className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
                     >
-                      {product ? 'Update Product' : 'Create Product'}
+                      {product ? "Update Product" : "Create Product"}
                     </button>
                   </div>
                 </form>
@@ -274,7 +329,7 @@ function ProductDialog({ isOpen, onClose, product = null }: { isOpen: boolean; o
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -288,21 +343,22 @@ export default function Products() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await ProductOperations.getProducts();
 
       setProducts(response.data.data);
     } catch (err) {
-      console.error('Error fetching products:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch products');
+      console.error("Error fetching products:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch products");
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredProducts = products.filter(product =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.brand.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.brand.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleEdit = (product: Product) => {
@@ -394,7 +450,9 @@ export default function Products() {
                   </div>
                 )}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{product.title}</h3>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {product.title}
+                  </h3>
                   <p className="mt-1 text-sm text-gray-500">{product.brand}</p>
                 </div>
               </div>
@@ -412,25 +470,34 @@ export default function Products() {
             </div>
             <div className="mt-4">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold text-gray-900">₹{product.price.toLocaleString()}</span>
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
+                <span className="text-lg font-semibold text-gray-900">
+                  ₹{product.price.toLocaleString()}
+                </span>
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    product.stock > 0
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {product.stock > 0
+                    ? `In Stock (${product.stock})`
+                    : "Out of Stock"}
                 </span>
               </div>
               {product.keywords && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {product.keywords.split('\n').map((keyword, index) => (
-                    keyword.trim() && (
-                      <span
-                        key={index}
-                        className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700"
-                      >
-                        {keyword.trim()}
-                      </span>
-                    )
-                  ))}
+                  {product.keywords.split("\n").map(
+                    (keyword, index) =>
+                      keyword.trim() && (
+                        <span
+                          key={index}
+                          className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700"
+                        >
+                          {keyword.trim()}
+                        </span>
+                      ),
+                  )}
                 </div>
               )}
             </div>

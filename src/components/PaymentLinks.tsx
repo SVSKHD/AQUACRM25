@@ -1,22 +1,31 @@
-'use client';
+"use client";
 
-import { useState, Fragment } from 'react';
-import { Plus, Search, Edit2, Trash2, Link, Copy, ExternalLink, Check } from 'lucide-react';
-import { Dialog, Transition } from '@headlessui/react';
+import { useState, Fragment } from "react";
+import {
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
+  Link,
+  Copy,
+  ExternalLink,
+  Check,
+} from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 
 interface PaymentLink {
   id: string;
   title: string;
   amount: number;
   description: string;
-  status: 'active' | 'expired' | 'completed';
+  status: "active" | "expired" | "completed";
   expiryDate: string;
   createdAt: string;
   url: string;
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;
-  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentStatus: "pending" | "paid" | "failed";
   paymentMethod?: string;
   transactionId?: string;
 }
@@ -24,69 +33,79 @@ interface PaymentLink {
 // Mock data for development
 const initialPaymentLinks: PaymentLink[] = [
   {
-    id: '1',
-    title: 'Water Softener Installation',
+    id: "1",
+    title: "Water Softener Installation",
     amount: 15000,
-    description: 'Payment for installation of Kent water softener',
-    status: 'active',
-    expiryDate: '2025-04-15',
-    createdAt: '2025-03-15',
-    url: 'https://pay.aquakart.co.in/p/water-softener-installation',
-    customerName: 'John Doe',
-    customerEmail: 'john@example.com',
-    customerPhone: '9876543210',
-    paymentStatus: 'pending'
+    description: "Payment for installation of Kent water softener",
+    status: "active",
+    expiryDate: "2025-04-15",
+    createdAt: "2025-03-15",
+    url: "https://pay.aquakart.co.in/p/water-softener-installation",
+    customerName: "John Doe",
+    customerEmail: "john@example.com",
+    customerPhone: "9876543210",
+    paymentStatus: "pending",
   },
   {
-    id: '2',
-    title: 'RO System Maintenance',
+    id: "2",
+    title: "RO System Maintenance",
     amount: 2500,
-    description: 'Annual maintenance contract for RO system',
-    status: 'completed',
-    expiryDate: '2025-03-10',
-    createdAt: '2025-03-01',
-    url: 'https://pay.aquakart.co.in/p/ro-maintenance',
-    customerName: 'Jane Smith',
-    customerEmail: 'jane@example.com',
-    customerPhone: '9876543211',
-    paymentStatus: 'paid',
-    paymentMethod: 'UPI',
-    transactionId: 'TXN123456789'
+    description: "Annual maintenance contract for RO system",
+    status: "completed",
+    expiryDate: "2025-03-10",
+    createdAt: "2025-03-01",
+    url: "https://pay.aquakart.co.in/p/ro-maintenance",
+    customerName: "Jane Smith",
+    customerEmail: "jane@example.com",
+    customerPhone: "9876543211",
+    paymentStatus: "paid",
+    paymentMethod: "UPI",
+    transactionId: "TXN123456789",
   },
   {
-    id: '3',
-    title: 'Filter Replacement',
+    id: "3",
+    title: "Filter Replacement",
     amount: 1200,
-    description: 'Replacement of water filter cartridges',
-    status: 'expired',
-    expiryDate: '2025-02-28',
-    createdAt: '2025-02-15',
-    url: 'https://pay.aquakart.co.in/p/filter-replacement',
-    customerName: 'Mike Johnson',
-    customerEmail: 'mike@example.com',
-    customerPhone: '9876543212',
-    paymentStatus: 'failed'
-  }
+    description: "Replacement of water filter cartridges",
+    status: "expired",
+    expiryDate: "2025-02-28",
+    createdAt: "2025-02-15",
+    url: "https://pay.aquakart.co.in/p/filter-replacement",
+    customerName: "Mike Johnson",
+    customerEmail: "mike@example.com",
+    customerPhone: "9876543212",
+    paymentStatus: "failed",
+  },
 ];
 
-function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: boolean; onClose: () => void; paymentLink?: PaymentLink | null }) {
+function PaymentLinkDialog({
+  isOpen,
+  onClose,
+  paymentLink = null,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  paymentLink?: PaymentLink | null;
+}) {
   const [formData, setFormData] = useState<Partial<PaymentLink>>(
     paymentLink || {
-      title: '',
+      title: "",
       amount: 0,
-      description: '',
-      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
-      customerName: '',
-      customerEmail: '',
-      customerPhone: '',
-      status: 'active',
-      paymentStatus: 'pending'
-    }
+      description: "",
+      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0], // 7 days from now
+      customerName: "",
+      customerEmail: "",
+      customerPhone: "",
+      status: "active",
+      paymentStatus: "pending",
+    },
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitting payment link:', formData);
+    console.log("Submitting payment link:", formData);
     onClose();
   };
 
@@ -121,26 +140,39 @@ function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: bo
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {paymentLink ? 'Edit Payment Link' : 'Create New Payment Link'}
+                  {paymentLink
+                    ? "Edit Payment Link"
+                    : "Create New Payment Link"}
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Title
+                    </label>
                     <input
                       type="text"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Amount (₹)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Amount (₹)
+                    </label>
                     <input
                       type="number"
                       value={formData.amount}
-                      onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          amount: parseFloat(e.target.value),
+                        })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       min="0"
                       step="0.01"
@@ -149,10 +181,17 @@ function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: bo
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={3}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
@@ -161,20 +200,34 @@ function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: bo
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Expiry Date
+                      </label>
                       <input
                         type="date"
                         value={formData.expiryDate}
-                        onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            expiryDate: e.target.value,
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                      </label>
                       <select
                         value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value as PaymentLink['status'] })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            status: e.target.value as PaymentLink["status"],
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       >
                         <option value="active">Active</option>
@@ -185,33 +238,56 @@ function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: bo
                   </div>
 
                   <div className="border-t border-gray-200 pt-6">
-                    <h4 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h4>
+                    <h4 className="text-lg font-medium text-gray-900 mb-4">
+                      Customer Information
+                    </h4>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Customer Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Customer Name
+                        </label>
                         <input
                           type="text"
                           value={formData.customerName}
-                          onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              customerName: e.target.value,
+                            })
+                          }
                           className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                          </label>
                           <input
                             type="email"
                             value={formData.customerEmail}
-                            onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                customerEmail: e.target.value,
+                              })
+                            }
                             className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Phone
+                          </label>
                           <input
                             type="tel"
                             value={formData.customerPhone}
-                            onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                customerPhone: e.target.value,
+                              })
+                            }
                             className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                           />
                         </div>
@@ -231,7 +307,7 @@ function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: bo
                       type="submit"
                       className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
                     >
-                      {paymentLink ? 'Update Link' : 'Create Link'}
+                      {paymentLink ? "Update Link" : "Create Link"}
                     </button>
                   </div>
                 </form>
@@ -245,17 +321,20 @@ function PaymentLinkDialog({ isOpen, onClose, paymentLink = null }: { isOpen: bo
 }
 
 export default function PaymentLinks() {
-  const [paymentLinks, setPaymentLinks] = useState<PaymentLink[]>(initialPaymentLinks);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [paymentLinks, setPaymentLinks] =
+    useState<PaymentLink[]>(initialPaymentLinks);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedPaymentLink, setSelectedPaymentLink] = useState<PaymentLink | null>(null);
+  const [selectedPaymentLink, setSelectedPaymentLink] =
+    useState<PaymentLink | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const filteredPaymentLinks = paymentLinks.filter(link =>
-    link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    link.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    link.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    link.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPaymentLinks = paymentLinks.filter(
+    (link) =>
+      link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      link.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      link.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      link.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleEdit = (paymentLink: PaymentLink) => {
@@ -274,37 +353,37 @@ export default function PaymentLinks() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const getStatusColor = (status: PaymentLink['status']) => {
+  const getStatusColor = (status: PaymentLink["status"]) => {
     switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'expired':
-        return 'bg-red-100 text-red-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "expired":
+        return "bg-red-100 text-red-800";
+      case "completed":
+        return "bg-blue-100 text-blue-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getPaymentStatusColor = (status: PaymentLink['paymentStatus']) => {
+  const getPaymentStatusColor = (status: PaymentLink["paymentStatus"]) => {
     switch (status) {
-      case 'paid':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
+      case "paid":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "failed":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -352,7 +431,9 @@ export default function PaymentLinks() {
           >
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-lg font-medium text-gray-900">{link.title}</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  {link.title}
+                </h3>
                 <p className="mt-1 text-sm text-gray-500">{link.description}</p>
               </div>
               <div className="flex space-x-2">
@@ -367,33 +448,48 @@ export default function PaymentLinks() {
                 </button>
               </div>
             </div>
-            
+
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">Amount</span>
-                <span className="font-medium">₹{link.amount.toLocaleString()}</span>
+                <span className="text-sm font-medium text-gray-500">
+                  Amount
+                </span>
+                <span className="font-medium">
+                  ₹{link.amount.toLocaleString()}
+                </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">Expires</span>
+                <span className="text-sm font-medium text-gray-500">
+                  Expires
+                </span>
                 <span className="text-sm">{formatDate(link.expiryDate)}</span>
               </div>
 
               {link.customerName && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-500">Customer</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    Customer
+                  </span>
                   <span className="text-sm">{link.customerName}</span>
                 </div>
               )}
 
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">Status</span>
+                <span className="text-sm font-medium text-gray-500">
+                  Status
+                </span>
                 <div className="flex space-x-2">
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(link.status)}`}>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(link.status)}`}
+                  >
                     {link.status.charAt(0).toUpperCase() + link.status.slice(1)}
                   </span>
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getPaymentStatusColor(link.paymentStatus)}`}>
-                    {link.paymentStatus.charAt(0).toUpperCase() + link.paymentStatus.slice(1)}
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getPaymentStatusColor(link.paymentStatus)}`}
+                  >
+                    {link.paymentStatus.charAt(0).toUpperCase() +
+                      link.paymentStatus.slice(1)}
                   </span>
                 </div>
               </div>
@@ -401,9 +497,9 @@ export default function PaymentLinks() {
               <div className="pt-3 border-t border-gray-100">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 truncate mr-2">
-                    <a 
-                      href={link.url} 
-                      target="_blank" 
+                    <a
+                      href={link.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-cyan-600 hover:text-cyan-800 flex items-center"
                     >

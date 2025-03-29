@@ -63,25 +63,24 @@ export default function InvoiceView() {
   const [downloading, setDownloading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
- 
   useEffect(() => {
-    fetchInvoice()
+    fetchInvoice();
   }, [id]);
 
-  const fetchInvoice = async () => { 
+  const fetchInvoice = async () => {
     setLoading(true);
     try {
       await invoiceOperations.getInvoiceById(id).then((res) => {
-         setTimeout(() => {
-           setInvoice(res.data);
-           setLoading(false);
-         }, 1000);
-      })
+        setTimeout(() => {
+          setInvoice(res.data);
+          setLoading(false);
+        }, 1000);
+      });
     } catch (error) {
       setError("An error occurred while fetching the invoice.");
       setLoading(false);
     }
-  }
+  };
 
   const gstValueGenerate = (price: number) => {
     let basePrice = Math.floor(price * 0.8474594);
@@ -97,144 +96,139 @@ export default function InvoiceView() {
   const calculateSubtotal = () => {
     return invoice?.products.reduce(
       (sum, product) => sum + product.productPrice,
-      0
+      0,
     );
   };
 
-const handleDownloadPDF = () => {
-  if (!invoice) return;
+  const handleDownloadPDF = () => {
+    if (!invoice) return;
 
-  setDownloading(true);
+    setDownloading(true);
 
-  try {
-    const doc = new jsPDF();
+    try {
+      const doc = new jsPDF();
 
-    // Header
-    doc.setFontSize(20);
-    doc.text("Aquakart - Invoice", 15, 20);
+      // Header
+      doc.setFontSize(20);
+      doc.text("Aquakart - Invoice", 15, 20);
 
-    // Top-right Aquakart and GST
-    doc.setFontSize(18);
-    doc.text("Aquakart", 135, 20);
-    doc.setFontSize(10);
-    doc.text("GST: 36AJOPH6387A1Z2", 135, 25);
-
-    // Invoice No & Date
-    doc.setFontSize(10);
-    doc.text(`Invoice No: ${invoice.invoiceNo}`, 15, 30);
-    doc.text(`Date: ${invoice.date}`, 15, 35);
-
-    // Customer & GST Details Side by Side
-    doc.setFontSize(12);
-    doc.text("Customer Details", 15, 45);
-    
-
-    doc.setFontSize(10);
-    // Customer Details
-    doc.text(`Name: ${invoice.customerDetails.name}`, 15, 55);
-    doc.text(`Phone: ${invoice.customerDetails.phone}`, 15, 60);
-    doc.text(`Email: ${invoice.customerDetails.email}`, 15, 65);
-    const customerAddressLines = doc.splitTextToSize(
-      `Address: ${invoice.customerDetails.address}`,
-      90
-    );
-    customerAddressLines.forEach((line, idx) => {
-      doc.text(line, 15, 70 + idx * 5);
-    });
-
-    // GST Details
-    if (invoice.gst) {
-      doc.text("GST Details", 110, 45);
-      doc.text(`GST Name: ${invoice.gstDetails.gstName}`, 110, 55);
-      doc.text(`GST No: ${invoice.gstDetails.gstNo}`, 110, 60);
-      doc.text(`GST Email: ${invoice.gstDetails.gstEmail}`, 110, 65);
-    
-      const gstAddressLines = invoice.gstDetails.gstAddress
-        ? invoice.gstDetails.gstAddress.split("\n")
-        : [];
-      doc.text("Address:", 110, 70);
-      gstAddressLines.forEach((line, idx) => {
-        doc.text(line, 115, 75 + idx * 5);
-      });
-
-    }
-
-    // Adjust startY closer
-    let startY = 80;
-
-    // Bank Details (Moved slightly up)
-    if (invoice.po) {
-      doc.setFontSize(12);
-      doc.text("Bank Details", 15, startY);
+      // Top-right Aquakart and GST
+      doc.setFontSize(18);
+      doc.text("Aquakart", 135, 20);
       doc.setFontSize(10);
+      doc.text("GST: 36AJOPH6387A1Z2", 135, 25);
 
-      // ICICI Bank
-      doc.text("ICICI Bank", 15, startY + 8);
-      doc.text("A/c Name: Kundana Enterprises", 15, startY + 13);
-      doc.text("A/c No: 8813356673", 15, startY + 18);
-      doc.text("IFSC: KKBK0007463", 15, startY + 23);
+      // Invoice No & Date
+      doc.setFontSize(10);
+      doc.text(`Invoice No: ${invoice.invoiceNo}`, 15, 30);
+      doc.text(`Date: ${invoice.date}`, 15, 35);
 
-      // Kotak Bank
-      doc.text("Kotak Bank", 75, startY + 8);
-      doc.text("A/c Name: Kundana Enterprises", 75, startY + 13);
-      doc.text("A/c No: 131605003314", 75, startY + 18);
-      doc.text("IFSC: ICIC0001316", 75, startY + 23);
+      // Customer & GST Details Side by Side
+      doc.setFontSize(12);
+      doc.text("Customer Details", 15, 45);
 
-      // UPI Details
-      doc.text("UPI", 135, startY + 8);
-      doc.text("GPay: 9182119842", 135, startY + 13);
-      doc.text("PhonePe: 9182119842", 135, startY + 18);
-
-      startY += 35;
-    }
-
-    // Products Table
-   const tableData = invoice.products.map((product) => [
-     product.productName,
-     product.productSerialNo,
-     product.productQuantity,
-     `Rs.${BasePrice(product.productPrice).toLocaleString()}`,
-     `Rs.${gstValueGenerate(product.productPrice).toLocaleString()}`,
-     `Rs.${product.productPrice.toLocaleString()}`,
-   ]);
-
-
-    autoTable(doc, {
-      startY: startY,
-      head: [["Product", "Serial No", "Qty", "BasePrice","GST",  "Total"]],
-      body: tableData,
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [0, 120, 200], textColor: 255 },
-      theme: "grid",
-      margin: { left: 15, right: 15 },
-    });
-
-    // Terms and Conditions
-    const finalY = doc.lastAutoTable.finalY || startY;
-    doc.setFontSize(12);
-    doc.text("Terms and Conditions", 15, finalY + 15);
-    doc.setFontSize(8);
-
-    let termsY = finalY + 20;
-    termsAndConditions.forEach((term, index) => {
-      doc.text(`${index + 1}. ${term.title}:`, 15, termsY);
-      const splitDescription = doc.splitTextToSize(term.description, 180);
-      splitDescription.forEach((line) => {
-        doc.text(line, 20, (termsY += 5));
+      doc.setFontSize(10);
+      // Customer Details
+      doc.text(`Name: ${invoice.customerDetails.name}`, 15, 55);
+      doc.text(`Phone: ${invoice.customerDetails.phone}`, 15, 60);
+      doc.text(`Email: ${invoice.customerDetails.email}`, 15, 65);
+      const customerAddressLines = doc.splitTextToSize(
+        `Address: ${invoice.customerDetails.address}`,
+        90,
+      );
+      customerAddressLines.forEach((line, idx) => {
+        doc.text(line, 15, 70 + idx * 5);
       });
-      termsY += 7;
-    });
 
-    // Save PDF
-    doc.save(`${invoice.invoiceNo}.pdf`);
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-  } finally {
-    setDownloading(false);
-  }
-};
+      // GST Details
+      if (invoice.gst) {
+        doc.text("GST Details", 110, 45);
+        doc.text(`GST Name: ${invoice.gstDetails.gstName}`, 110, 55);
+        doc.text(`GST No: ${invoice.gstDetails.gstNo}`, 110, 60);
+        doc.text(`GST Email: ${invoice.gstDetails.gstEmail}`, 110, 65);
 
+        const gstAddressLines = invoice.gstDetails.gstAddress
+          ? invoice.gstDetails.gstAddress.split("\n")
+          : [];
+        doc.text("Address:", 110, 70);
+        gstAddressLines.forEach((line, idx) => {
+          doc.text(line, 115, 75 + idx * 5);
+        });
+      }
 
+      // Adjust startY closer
+      let startY = 80;
+
+      // Bank Details (Moved slightly up)
+      if (invoice.po) {
+        doc.setFontSize(12);
+        doc.text("Bank Details", 15, startY);
+        doc.setFontSize(10);
+
+        // ICICI Bank
+        doc.text("ICICI Bank", 15, startY + 8);
+        doc.text("A/c Name: Kundana Enterprises", 15, startY + 13);
+        doc.text("A/c No: 8813356673", 15, startY + 18);
+        doc.text("IFSC: KKBK0007463", 15, startY + 23);
+
+        // Kotak Bank
+        doc.text("Kotak Bank", 75, startY + 8);
+        doc.text("A/c Name: Kundana Enterprises", 75, startY + 13);
+        doc.text("A/c No: 131605003314", 75, startY + 18);
+        doc.text("IFSC: ICIC0001316", 75, startY + 23);
+
+        // UPI Details
+        doc.text("UPI", 135, startY + 8);
+        doc.text("GPay: 9182119842", 135, startY + 13);
+        doc.text("PhonePe: 9182119842", 135, startY + 18);
+
+        startY += 35;
+      }
+
+      // Products Table
+      const tableData = invoice.products.map((product) => [
+        product.productName,
+        product.productSerialNo,
+        product.productQuantity,
+        `Rs.${BasePrice(product.productPrice).toLocaleString()}`,
+        `Rs.${gstValueGenerate(product.productPrice).toLocaleString()}`,
+        `Rs.${product.productPrice.toLocaleString()}`,
+      ]);
+
+      autoTable(doc, {
+        startY: startY,
+        head: [["Product", "Serial No", "Qty", "BasePrice", "GST", "Total"]],
+        body: tableData,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [0, 120, 200], textColor: 255 },
+        theme: "grid",
+        margin: { left: 15, right: 15 },
+      });
+
+      // Terms and Conditions
+      const finalY = doc.lastAutoTable.finalY || startY;
+      doc.setFontSize(12);
+      doc.text("Terms and Conditions", 15, finalY + 15);
+      doc.setFontSize(8);
+
+      let termsY = finalY + 20;
+      termsAndConditions.forEach((term, index) => {
+        doc.text(`${index + 1}. ${term.title}:`, 15, termsY);
+        const splitDescription = doc.splitTextToSize(term.description, 180);
+        splitDescription.forEach((line) => {
+          doc.text(line, 20, (termsY += 5));
+        });
+        termsY += 7;
+      });
+
+      // Save PDF
+      doc.save(`${invoice.invoiceNo}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const copyToClipboard = (field: string) => {
     let textToCopy = "";
@@ -280,15 +274,11 @@ const handleDownloadPDF = () => {
     );
   }
 
-
-   
-
   const calculateGST = () => {
     const subtotal = calculateSubtotal();
     return invoice.gst ? subtotal * 0.18 : 0; // Assuming 18% GST
   };
 
- 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto">
@@ -342,8 +332,8 @@ const handleDownloadPDF = () => {
                     {invoice.po
                       ? "Purchase Order"
                       : invoice.gst
-                      ? "GST Invoice"
-                      : "Regular Invoice"}
+                        ? "GST Invoice"
+                        : "Regular Invoice"}
                   </p>
                 </div>
                 <div className="flex items-center justify-end">
@@ -471,14 +461,11 @@ const handleDownloadPDF = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-right text-gray-500">
                           ₹
                           {gstValueGenerate(
-                            product.productPrice
+                            product.productPrice,
                           ).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-gray-900 font-medium">
-                          ₹
-                          {BasePrice(
-                            product.productPrice
-                          ).toLocaleString()}
+                          ₹{BasePrice(product.productPrice).toLocaleString()}
                         </td>
                       </tr>
                     ))}
@@ -494,19 +481,21 @@ const handleDownloadPDF = () => {
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
                     <span>
-                      ₹
-                      {BasePrice(calculateSubtotal()).toLocaleString()}
+                      ₹{BasePrice(calculateSubtotal()).toLocaleString()}
                     </span>
                   </div>
                   {invoice.gst && (
                     <div className="flex justify-between text-gray-600">
                       <span>GST (18%)</span>
-                      <span>₹{gstValueGenerate(calculateSubtotal()).toLocaleString()}</span>
+                      <span>
+                        ₹
+                        {gstValueGenerate(calculateSubtotal()).toLocaleString()}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between text-lg font-semibold text-gray-900 pt-3 border-t border-gray-200">
                     <span>Total</span>
-                    <span>₹{calculateSubtotal() .toLocaleString()}</span>
+                    <span>₹{calculateSubtotal().toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -524,8 +513,8 @@ const handleDownloadPDF = () => {
                       invoice.paidStatus === "paid"
                         ? "bg-green-100 text-green-800"
                         : invoice.paidStatus === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
                     }`}
                   >
                     {invoice.paidStatus.charAt(0).toUpperCase() +

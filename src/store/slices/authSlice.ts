@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authService } from '../../services/api';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { authService } from "../../services/api";
 
 interface User {
   id: string;
@@ -18,39 +18,36 @@ const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   loading: false,
-  error: null
+  error: null,
 };
 
 export const signIn = createAsyncThunk(
-  'auth/signIn',
+  "auth/signIn",
   async ({ email, password }: { email: string; password: string }) => {
     try {
       const response = await authService.signIn(email, password);
       return {
         id: response.user._id,
         email: response.user.email,
-        token: response.token
+        token: response.token,
       };
     } catch (error: any) {
-      throw new Error(error.message || 'Failed to sign in');
+      throw new Error(error.message || "Failed to sign in");
     }
-  }
+  },
 );
 
-export const checkAuth = createAsyncThunk(
-  'auth/checkAuth',
-  async () => {
-    const session = await authService.getSession();
-    if (!session) return null;
-    return {
-      id: session.user._id,
-      email: session.user.email
-    };
-  }
-);
+export const checkAuth = createAsyncThunk("auth/checkAuth", async () => {
+  const session = await authService.getSession();
+  if (!session) return null;
+  return {
+    id: session.user._id,
+    email: session.user.email,
+  };
+});
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     signOut: (state) => {
@@ -58,7 +55,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     // Sign In
@@ -74,7 +71,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || 'Failed to sign in';
+      state.error = action.error.message || "Failed to sign in";
     });
 
     // Check Auth
@@ -94,7 +91,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = null;
     });
-  }
+  },
 });
 
 export const { signOut } = authSlice.actions;

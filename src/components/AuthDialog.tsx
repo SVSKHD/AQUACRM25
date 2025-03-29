@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Fragment, useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { Info, LogIn } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { signIn } from '../store/slices/authSlice';
+import { Fragment, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Info, LogIn } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { signIn } from "../store/slices/authSlice";
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -12,10 +12,10 @@ interface AuthDialogProps {
 }
 
 export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
-  const [email, setEmail] = useState('demo@aquakart.com');
-  const [password, setPassword] = useState('demo123');
+  const [email, setEmail] = useState("demo@aquakart.com");
+  const [password, setPassword] = useState("demo123");
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { loading, error } = useAppSelector((state) => state.auth);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
       await dispatch(signIn({ email, password })).unwrap();
       onClose();
     } catch (error) {
-      console.error('Auth error:', error);
+      console.error("Auth error:", error);
     }
   };
 
@@ -66,7 +66,9 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                   <div className="flex items-start">
                     <Info className="h-5 w-5 text-blue-500 mt-0.5 mr-3" />
                     <div>
-                      <h4 className="text-sm font-medium text-blue-900">Demo Credentials</h4>
+                      <h4 className="text-sm font-medium text-blue-900">
+                        Demo Credentials
+                      </h4>
                       <p className="mt-1 text-sm text-blue-700">
                         Use these credentials to explore the dashboard:
                       </p>

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, Fragment, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, GitFork } from 'lucide-react';
-import { Dialog, Transition } from '@headlessui/react';
-import SubCategoryOperations from '@/services/subCategories';
+import { useState, Fragment, useEffect } from "react";
+import { Plus, Search, Edit2, Trash2, GitFork } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import SubCategoryOperations from "@/services/subCategories";
 
 interface SubCategoryPhoto {
   id: string;
@@ -36,68 +36,85 @@ interface SubCategory {
 
 // Mock data for fallback
 const mockSubCategories = {
-  "success": true,
-  "data": [
+  success: true,
+  data: [
     {
-      "_id": "6533f07c7986c193b3c620d2",
-      "title": "Wall-Mount-Ro-Purifiers",
-      "description": "Wall-mounted RO (Reverse Osmosis) purifiers are popular due to their space-saving design and efficient water purification capabilities,Wall-mounted RO purifiers are designed to be fixed on walls, ensuring they don't consume countertop or floor space.",
-      "photos": [
+      _id: "6533f07c7986c193b3c620d2",
+      title: "Wall-Mount-Ro-Purifiers",
+      description:
+        "Wall-mounted RO (Reverse Osmosis) purifiers are popular due to their space-saving design and efficient water purification capabilities,Wall-mounted RO purifiers are designed to be fixed on walls, ensuring they don't consume countertop or floor space.",
+      photos: [
         {
-          "id": "subcategories/q50qh2ebkyq4csy49i9p",
-          "secure_url": "https://res.cloudinary.com/aquakartproducts/image/upload/v1697890271/subcategories/ynhebfylurso6ip1doa6.png",
-          "_id": "6533f07c7986c193b3c620d3"
-        }
+          id: "subcategories/q50qh2ebkyq4csy49i9p",
+          secure_url:
+            "https://res.cloudinary.com/aquakartproducts/image/upload/v1697890271/subcategories/ynhebfylurso6ip1doa6.png",
+          _id: "6533f07c7986c193b3c620d3",
+        },
       ],
-      "keywords": "Reverse Osmosis\nFiltration\nMembrane\nContaminant removal\nTDS (Total Dissolved Solids)\nPre-filter\nPost-filter\nActivated carbon\nRO tank\nPurified water\nBrine\nWastewater\nWater quality\nDrinking water\nWater purification system\nUV (Ultraviolet) disinfection\nUF (Ultra Filtration)\nMineral cartridge",
-      "category": null,
-      "createdAt": "2023-10-21T15:38:36.522Z",
-      "updatedAt": "2023-10-21T15:38:36.522Z",
-      "__v": 0
+      keywords:
+        "Reverse Osmosis\nFiltration\nMembrane\nContaminant removal\nTDS (Total Dissolved Solids)\nPre-filter\nPost-filter\nActivated carbon\nRO tank\nPurified water\nBrine\nWastewater\nWater quality\nDrinking water\nWater purification system\nUV (Ultraviolet) disinfection\nUF (Ultra Filtration)\nMineral cartridge",
+      category: null,
+      createdAt: "2023-10-21T15:38:36.522Z",
+      updatedAt: "2023-10-21T15:38:36.522Z",
+      __v: 0,
     },
     {
-      "_id": "65ec9a8a5a090a2b5d0e7240",
-      "title": "Manual-Softeners",
-      "description": "Manual softeners, also known as manual regeneration water softeners, require the user to initiate the regeneration process manually. This typically involves adding salt to the system and activating the regeneration cycle at scheduled intervals, based on the water usage and hardness level. Unlike automatic softeners, manual units do not regenerate based on a timer or water usage, offering simplicity in design but requiring more hands-on management from the user.",
-      "photos": [
+      _id: "65ec9a8a5a090a2b5d0e7240",
+      title: "Manual-Softeners",
+      description:
+        "Manual softeners, also known as manual regeneration water softeners, require the user to initiate the regeneration process manually. This typically involves adding salt to the system and activating the regeneration cycle at scheduled intervals, based on the water usage and hardness level. Unlike automatic softeners, manual units do not regenerate based on a timer or water usage, offering simplicity in design but requiring more hands-on management from the user.",
+      photos: [
         {
-          "id": "subcategories/yvd2dvlld2ah32j2lcfi",
-          "secure_url": "https://res.cloudinary.com/aquakartproducts/image/upload/v1710004874/subcategories/yvd2dvlld2ah32j2lcfi.jpg",
-          "_id": "65ec9a8a5a090a2b5d0e7241"
-        }
+          id: "subcategories/yvd2dvlld2ah32j2lcfi",
+          secure_url:
+            "https://res.cloudinary.com/aquakartproducts/image/upload/v1710004874/subcategories/yvd2dvlld2ah32j2lcfi.jpg",
+          _id: "65ec9a8a5a090a2b5d0e7241",
+        },
       ],
-      "keywords": "Manual water softeners\nManual softener systems\nManual regeneration softeners\n",
-      "category": {
-        "_id": "6528debce9e8a06a49a23b2c",
-        "title": "Softeners",
-        "description": "These are devices or systems used to reduce the hardness of water. Hard water contains a high concentration of minerals, primarily calcium and magnesium. Water softeners work by removing or replacing these minerals with sodium ions, making the water \"softer.\" Softened water is often preferred because it can reduce the buildup of scale in pipes and appliances and is gentler on the skin and hair.",
-        "photos": [
+      keywords:
+        "Manual water softeners\nManual softener systems\nManual regeneration softeners\n",
+      category: {
+        _id: "6528debce9e8a06a49a23b2c",
+        title: "Softeners",
+        description:
+          'These are devices or systems used to reduce the hardness of water. Hard water contains a high concentration of minerals, primarily calcium and magnesium. Water softeners work by removing or replacing these minerals with sodium ions, making the water "softer." Softened water is often preferred because it can reduce the buildup of scale in pipes and appliances and is gentler on the skin and hair.',
+        photos: [
           {
-            "id": "categories/aea3srvwixosjb4glfqa",
-            "secure_url": "https://res.cloudinary.com/aquakartproducts/image/upload/v1735741268/categories/aea3srvwixosjb4glfqa.png",
-            "_id": "67754f54519e14a0cb87d879"
-          }
+            id: "categories/aea3srvwixosjb4glfqa",
+            secure_url:
+              "https://res.cloudinary.com/aquakartproducts/image/upload/v1735741268/categories/aea3srvwixosjb4glfqa.png",
+            _id: "67754f54519e14a0cb87d879",
+          },
         ],
-        "keywords": "Aquakart reduce water hardness in Hyderabad,\nAquakart scale prevention system in Hyderabad,\nAquakart improve appliance lifespan in Hyderabad,\nAquakart soft water benefits in Hyderabad,\t\nAquakart protect plumbing from scale in Hyderabad,\nAquakart skin-friendly water system in Hyderabad,\nAquakart hair-friendly water solution in Hyderabad,",
-        "createdAt": "2023-10-13T06:07:56.503Z",
-        "updatedAt": "2025-01-01T14:36:50.569Z",
-        "__v": 1
+        keywords:
+          "Aquakart reduce water hardness in Hyderabad,\nAquakart scale prevention system in Hyderabad,\nAquakart improve appliance lifespan in Hyderabad,\nAquakart soft water benefits in Hyderabad,\t\nAquakart protect plumbing from scale in Hyderabad,\nAquakart skin-friendly water system in Hyderabad,\nAquakart hair-friendly water solution in Hyderabad,",
+        createdAt: "2023-10-13T06:07:56.503Z",
+        updatedAt: "2025-01-01T14:36:50.569Z",
+        __v: 1,
       },
-      "createdAt": "2024-03-09T17:21:14.904Z",
-      "updatedAt": "2024-03-09T17:21:14.904Z",
-      "__v": 0
-    }
-  ]
+      createdAt: "2024-03-09T17:21:14.904Z",
+      updatedAt: "2024-03-09T17:21:14.904Z",
+      __v: 0,
+    },
+  ],
 };
 
-function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: boolean; onClose: () => void; subCategory?: SubCategory | null }) {
+function SubCategoryDialog({
+  isOpen,
+  onClose,
+  subCategory = null,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  subCategory?: SubCategory | null;
+}) {
   const [formData, setFormData] = useState<Partial<SubCategory>>(
     subCategory || {
-      title: '',
-      description: '',
-      keywords: '',
-      photos: []
-    }
+      title: "",
+      description: "",
+      keywords: "",
+      photos: [],
+    },
   );
 
   useEffect(() => {
@@ -106,14 +123,14 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
         title: subCategory.title,
         description: subCategory.description,
         keywords: subCategory.keywords,
-        photos: subCategory.photos
+        photos: subCategory.photos,
       });
     } else {
       setFormData({
-        title: '',
-        description: '',
-        keywords: '',
-        photos: []
+        title: "",
+        description: "",
+        keywords: "",
+        photos: [],
       });
     }
   }, [subCategory]);
@@ -121,7 +138,7 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Submitting form data:', formData);
+    console.log("Submitting form data:", formData);
     onClose();
   };
 
@@ -156,39 +173,54 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {subCategory ? 'Edit Subcategory' : 'Add New Subcategory'}
+                  {subCategory ? "Edit Subcategory" : "Add New Subcategory"}
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   {/* Current Image Preview */}
-                  {subCategory && subCategory.photos && subCategory.photos[0] && (
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Current Image</label>
-                      <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
-                        <img
-                          src={subCategory.photos[0].secure_url}
-                          alt={subCategory.title}
-                          className="w-full h-full object-cover"
-                        />
+                  {subCategory &&
+                    subCategory.photos &&
+                    subCategory.photos[0] && (
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Current Image
+                        </label>
+                        <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
+                          <img
+                            src={subCategory.photos[0].secure_url}
+                            alt={subCategory.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Title
+                    </label>
                     <input
                       type="text"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={4}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       required
@@ -198,11 +230,15 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Keywords
-                      <span className="text-gray-500 text-xs ml-2">(One per line)</span>
+                      <span className="text-gray-500 text-xs ml-2">
+                        (One per line)
+                      </span>
                     </label>
                     <textarea
                       value={formData.keywords}
-                      onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, keywords: e.target.value })
+                      }
                       rows={4}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base font-mono text-sm"
                       placeholder="Enter keywords, one per line"
@@ -210,7 +246,9 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Image
+                    </label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
                         <svg
@@ -233,11 +271,18 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
                             className="relative cursor-pointer rounded-md font-medium text-cyan-600 hover:text-cyan-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-cyan-500"
                           >
                             <span>Upload a file</span>
-                            <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                            <input
+                              id="file-upload"
+                              name="file-upload"
+                              type="file"
+                              className="sr-only"
+                            />
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -254,7 +299,9 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
                       type="submit"
                       className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
                     >
-                      {subCategory ? 'Update Subcategory' : 'Create Subcategory'}
+                      {subCategory
+                        ? "Update Subcategory"
+                        : "Create Subcategory"}
                     </button>
                   </div>
                 </form>
@@ -269,9 +316,10 @@ function SubCategoryDialog({ isOpen, onClose, subCategory = null }: { isOpen: bo
 
 export default function SubCategories() {
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory | null>(null);
+  const [selectedSubCategory, setSelectedSubCategory] =
+    useState<SubCategory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -283,20 +331,23 @@ export default function SubCategories() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const result = await SubCategoryOperations.getSubCategories();
       setSubCategories(result.data.data);
     } catch (err) {
-      console.error('Error fetching subcategories:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch subcategories');
+      console.error("Error fetching subcategories:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch subcategories",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredSubCategories = subCategories.filter(subCategory =>
-    subCategory.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    subCategory.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSubCategories = subCategories.filter(
+    (subCategory) =>
+      subCategory.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      subCategory.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleEdit = (subCategory: SubCategory) => {
@@ -388,8 +439,12 @@ export default function SubCategories() {
                   </div>
                 )}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{subCategory.title}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{subCategory.description}</p>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {subCategory.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {subCategory.description}
+                  </p>
                 </div>
               </div>
               <div className="flex space-x-2">
@@ -404,7 +459,7 @@ export default function SubCategories() {
                 </button>
               </div>
             </div>
-            
+
             {subCategory.category && (
               <div className="mt-4">
                 <span className="inline-flex items-center rounded-full bg-cyan-100 px-2.5 py-0.5 text-xs font-medium text-cyan-800">
@@ -415,16 +470,17 @@ export default function SubCategories() {
 
             {subCategory.keywords && (
               <div className="mt-3 flex flex-wrap gap-2">
-                {subCategory.keywords.split('\n').map((keyword, index) => (
-                  keyword.trim() && (
-                    <span
-                      key={index}
-                      className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800"
-                    >
-                      {keyword.trim()}
-                    </span>
-                  )
-                ))}
+                {subCategory.keywords.split("\n").map(
+                  (keyword, index) =>
+                    keyword.trim() && (
+                      <span
+                        key={index}
+                        className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800"
+                      >
+                        {keyword.trim()}
+                      </span>
+                    ),
+                )}
               </div>
             )}
           </div>

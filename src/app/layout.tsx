@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Aquakart - Business Management Suite',
-  description: 'Manage your business with Aquakart',
+  title: "Aquakart - Business Management Suite",
+  description: "Manage your business with Aquakart",
 };
 
 export default function RootLayout({

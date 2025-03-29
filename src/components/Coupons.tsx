@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, Fragment } from 'react';
-import { Plus, Search, Edit2, Trash2, Ticket } from 'lucide-react';
-import { Dialog, Transition } from '@headlessui/react';
+import { useState, Fragment } from "react";
+import { Plus, Search, Edit2, Trash2, Ticket } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 
 interface Coupon {
   id: string;
   code: string;
-  type: 'percentage' | 'fixed';
+  type: "percentage" | "fixed";
   value: number;
   minPurchase: number;
   maxDiscount?: number;
@@ -15,74 +15,82 @@ interface Coupon {
   validUntil: string;
   usageLimit: number;
   usageCount: number;
-  status: 'active' | 'expired' | 'disabled';
+  status: "active" | "expired" | "disabled";
   description?: string;
 }
 
 const initialCoupons: Coupon[] = [
   {
-    id: '1',
-    code: 'SUMMER2025',
-    type: 'percentage',
+    id: "1",
+    code: "SUMMER2025",
+    type: "percentage",
     value: 20,
     minPurchase: 1000,
     maxDiscount: 2000,
-    validFrom: '2025-06-01',
-    validUntil: '2025-08-31',
+    validFrom: "2025-06-01",
+    validUntil: "2025-08-31",
     usageLimit: 1000,
     usageCount: 150,
-    status: 'active',
-    description: 'Summer sale discount'
+    status: "active",
+    description: "Summer sale discount",
   },
   {
-    id: '2',
-    code: 'WELCOME500',
-    type: 'fixed',
+    id: "2",
+    code: "WELCOME500",
+    type: "fixed",
     value: 500,
     minPurchase: 2000,
-    validFrom: '2025-01-01',
-    validUntil: '2025-12-31',
+    validFrom: "2025-01-01",
+    validUntil: "2025-12-31",
     usageLimit: 500,
     usageCount: 234,
-    status: 'active',
-    description: 'Welcome discount for new customers'
+    status: "active",
+    description: "Welcome discount for new customers",
   },
   {
-    id: '3',
-    code: 'FLASH25',
-    type: 'percentage',
+    id: "3",
+    code: "FLASH25",
+    type: "percentage",
     value: 25,
     minPurchase: 1500,
     maxDiscount: 1000,
-    validFrom: '2025-03-01',
-    validUntil: '2025-03-02',
+    validFrom: "2025-03-01",
+    validUntil: "2025-03-02",
     usageLimit: 100,
     usageCount: 100,
-    status: 'expired',
-    description: 'Flash sale discount'
-  }
+    status: "expired",
+    description: "Flash sale discount",
+  },
 ];
 
-function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onClose: () => void; coupon?: Coupon | null }) {
+function CouponDialog({
+  isOpen,
+  onClose,
+  coupon = null,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  coupon?: Coupon | null;
+}) {
   const [formData, setFormData] = useState<Partial<Coupon>>(
     coupon || {
-      code: '',
-      type: 'percentage',
+      code: "",
+      type: "percentage",
       value: 0,
       minPurchase: 0,
       maxDiscount: undefined,
-      validFrom: new Date().toISOString().split('T')[0],
-      validUntil: new Date().toISOString().split('T')[0],
+      validFrom: new Date().toISOString().split("T")[0],
+      validUntil: new Date().toISOString().split("T")[0],
       usageLimit: 0,
-      status: 'active',
-      description: ''
-    }
+      status: "active",
+      description: "",
+    },
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Submitting coupon:', formData);
+    console.log("Submitting coupon:", formData);
     onClose();
   };
 
@@ -117,15 +125,22 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {coupon ? 'Edit Coupon' : 'Create New Coupon'}
+                  {coupon ? "Edit Coupon" : "Create New Coupon"}
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Coupon Code</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Coupon Code
+                    </label>
                     <input
                       type="text"
                       value={formData.code}
-                      onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          code: e.target.value.toUpperCase(),
+                        })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base uppercase"
                       required
                     />
@@ -133,10 +148,17 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Discount Type</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Discount Type
+                      </label>
                       <select
                         value={formData.type}
-                        onChange={(e) => setFormData({ ...formData, type: e.target.value as 'percentage' | 'fixed' })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            type: e.target.value as "percentage" | "fixed",
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       >
                         <option value="percentage">Percentage</option>
@@ -145,15 +167,22 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {formData.type === 'percentage' ? 'Discount Percentage' : 'Discount Amount'}
+                        {formData.type === "percentage"
+                          ? "Discount Percentage"
+                          : "Discount Amount"}
                       </label>
                       <input
                         type="number"
                         value={formData.value}
-                        onChange={(e) => setFormData({ ...formData, value: parseFloat(e.target.value) })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            value: parseFloat(e.target.value),
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                         min="0"
-                        max={formData.type === 'percentage' ? "100" : undefined}
+                        max={formData.type === "percentage" ? "100" : undefined}
                         required
                       />
                     </div>
@@ -161,23 +190,37 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Purchase</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Minimum Purchase
+                      </label>
                       <input
                         type="number"
                         value={formData.minPurchase}
-                        onChange={(e) => setFormData({ ...formData, minPurchase: parseFloat(e.target.value) })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            minPurchase: parseFloat(e.target.value),
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                         min="0"
                         required
                       />
                     </div>
-                    {formData.type === 'percentage' && (
+                    {formData.type === "percentage" && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Maximum Discount</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Maximum Discount
+                        </label>
                         <input
                           type="number"
                           value={formData.maxDiscount}
-                          onChange={(e) => setFormData({ ...formData, maxDiscount: parseFloat(e.target.value) })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              maxDiscount: parseFloat(e.target.value),
+                            })
+                          }
                           className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                           min="0"
                         />
@@ -187,21 +230,35 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Valid From</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Valid From
+                      </label>
                       <input
                         type="date"
                         value={formData.validFrom}
-                        onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            validFrom: e.target.value,
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Valid Until</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Valid Until
+                      </label>
                       <input
                         type="date"
                         value={formData.validUntil}
-                        onChange={(e) => setFormData({ ...formData, validUntil: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            validUntil: e.target.value,
+                          })
+                        }
                         className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                         required
                       />
@@ -209,11 +266,18 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Usage Limit</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Usage Limit
+                    </label>
                     <input
                       type="number"
                       value={formData.usageLimit}
-                      onChange={(e) => setFormData({ ...formData, usageLimit: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          usageLimit: parseInt(e.target.value),
+                        })
+                      }
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                       min="0"
                       required
@@ -221,10 +285,17 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={3}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                     />
@@ -242,7 +313,7 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
                       type="submit"
                       className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
                     >
-                      {coupon ? 'Update Coupon' : 'Create Coupon'}
+                      {coupon ? "Update Coupon" : "Create Coupon"}
                     </button>
                   </div>
                 </form>
@@ -257,13 +328,14 @@ function CouponDialog({ isOpen, onClose, coupon = null }: { isOpen: boolean; onC
 
 export default function Coupons() {
   const [coupons] = useState<Coupon[]>(initialCoupons);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
-  const filteredCoupons = coupons.filter(coupon =>
-    coupon.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    coupon.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCoupons = coupons.filter(
+    (coupon) =>
+      coupon.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coupon.description?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleEdit = (coupon: Coupon) => {
@@ -276,24 +348,24 @@ export default function Coupons() {
     setIsDialogOpen(true);
   };
 
-  const getStatusColor = (status: Coupon['status']) => {
+  const getStatusColor = (status: Coupon["status"]) => {
     switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'expired':
-        return 'bg-red-100 text-red-800';
-      case 'disabled':
-        return 'bg-gray-100 text-gray-800';
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "expired":
+        return "bg-red-100 text-red-800";
+      case "disabled":
+        return "bg-gray-100 text-gray-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -345,8 +417,12 @@ export default function Coupons() {
                   <Ticket className="h-5 w-5 text-cyan-500" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{coupon.code}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{coupon.description}</p>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {coupon.code}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {coupon.description}
+                  </p>
                 </div>
               </div>
               <div className="flex space-x-2">
@@ -361,41 +437,55 @@ export default function Coupons() {
                 </button>
               </div>
             </div>
-            
+
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">Discount</span>
+                <span className="text-sm font-medium text-gray-500">
+                  Discount
+                </span>
                 <span className="font-medium">
-                  {coupon.type === 'percentage' ? `${coupon.value}%` : `₹${coupon.value}`}
+                  {coupon.type === "percentage"
+                    ? `${coupon.value}%`
+                    : `₹${coupon.value}`}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-500">Min. Purchase</span>
+                <span className="text-sm font-medium text-gray-500">
+                  Min. Purchase
+                </span>
                 <span className="font-medium">₹{coupon.minPurchase}</span>
               </div>
 
-              {coupon.type === 'percentage' && coupon.maxDiscount && (
+              {coupon.type === "percentage" && coupon.maxDiscount && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-500">Max. Discount</span>
+                  <span className="text-sm font-medium text-gray-500">
+                    Max. Discount
+                  </span>
                   <span className="font-medium">₹{coupon.maxDiscount}</span>
                 </div>
               )}
 
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-500">Usage</span>
-                <span className="font-medium">{coupon.usageCount} / {coupon.usageLimit}</span>
+                <span className="font-medium">
+                  {coupon.usageCount} / {coupon.usageLimit}
+                </span>
               </div>
 
               <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-500">Valid Period</span>
                   <span className="text-sm font-medium">
-                    {formatDate(coupon.validFrom)} - {formatDate(coupon.validUntil)}
+                    {formatDate(coupon.validFrom)} -{" "}
+                    {formatDate(coupon.validUntil)}
                   </span>
                 </div>
-                <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(coupon.status)}`}>
-                  {coupon.status.charAt(0).toUpperCase() + coupon.status.slice(1)}
+                <span
+                  className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(coupon.status)}`}
+                >
+                  {coupon.status.charAt(0).toUpperCase() +
+                    coupon.status.slice(1)}
                 </span>
               </div>
             </div>

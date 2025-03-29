@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Blog {
   _id: string;
@@ -9,7 +9,7 @@ interface Blog {
   category: string;
   tags: string[];
   author: string;
-  status: 'draft' | 'published';
+  status: "draft" | "published";
   featuredImage?: string;
   publishDate: string;
   readTime: number;
@@ -24,11 +24,11 @@ interface BlogState {
 const initialState: BlogState = {
   items: [],
   loading: false,
-  error: null
+  error: null,
 };
 
 const blogSlice = createSlice({
-  name: 'blogs',
+  name: "blogs",
   initialState,
   reducers: {
     setBlogs: (state, action: PayloadAction<Blog[]>) => {
@@ -38,21 +38,23 @@ const blogSlice = createSlice({
       state.items.push(action.payload);
     },
     updateBlog: (state, action: PayloadAction<Blog>) => {
-      const index = state.items.findIndex(item => item._id === action.payload._id);
+      const index = state.items.findIndex(
+        (item) => item._id === action.payload._id,
+      );
       if (index !== -1) {
         state.items[index] = action.payload;
       }
     },
     deleteBlog: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(item => item._id !== action.payload);
+      state.items = state.items.filter((item) => item._id !== action.payload);
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -61,7 +63,7 @@ export const {
   updateBlog,
   deleteBlog,
   setLoading,
-  setError
+  setError,
 } = blogSlice.actions;
 
 export default blogSlice.reducer;

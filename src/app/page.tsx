@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { LayoutDashboard, LogIn } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { checkAuth } from '@/store/slices/authSlice';
-import AuthDialog from '@/components/AuthDialog';
-import Dashboard from '@/components/Dashboard';
+import { useState, useEffect } from "react";
+import { LayoutDashboard, LogIn } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { checkAuth } from "@/store/slices/authSlice";
+import AuthDialog from "@/components/AuthDialog";
+import Dashboard from "@/components/Dashboard";
 
 export default function Home() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const { isAuthenticated, loading } = useAppSelector(state => state.auth);
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(checkAuth());
@@ -34,9 +34,11 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center mb-8">
           <LayoutDashboard className="h-16 w-16 text-cyan-600 mb-4" />
           <h1 className="text-3xl font-bold text-cyan-900">Aquakart</h1>
-          <p className="text-sm text-cyan-600 mt-1">Business Management Suite</p>
+          <p className="text-sm text-cyan-600 mt-1">
+            Business Management Suite
+          </p>
         </div>
-        
+
         <button
           onClick={() => setIsAuthDialogOpen(true)}
           className="inline-flex items-center justify-center rounded-lg border border-transparent bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 text-base font-medium text-white shadow-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-all duration-200"

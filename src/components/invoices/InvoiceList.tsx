@@ -1,8 +1,17 @@
-import {useState, Fragment} from 'react';
-import { FileText, Edit2, Trash2, Send, ExternalLink, Download, Package, AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Dialog, Transition } from '@headlessui/react';
-import { invoiceOperations, type Invoice } from '@/services/invoices';
+import { useState, Fragment } from "react";
+import {
+  FileText,
+  Edit2,
+  Trash2,
+  Send,
+  ExternalLink,
+  Download,
+  Package,
+  AlertTriangle,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { Dialog, Transition } from "@headlessui/react";
+import { invoiceOperations, type Invoice } from "@/services/invoices";
 
 interface InvoiceListProps {
   invoices: Invoice[];
@@ -10,7 +19,6 @@ interface InvoiceListProps {
   onDelete: () => void;
   calculateTotal: (products: Invoice["products"]) => number;
 }
-
 
 interface DeleteDialogProps {
   isOpen: boolean;
@@ -101,13 +109,14 @@ function DeleteDialog({
   );
 }
 
-
-
-
-
-export default function InvoiceList({ invoices, onEdit, calculateTotal, onDelete }: InvoiceListProps) {
-   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+export default function InvoiceList({
+  invoices,
+  onEdit,
+  calculateTotal,
+  onDelete,
+}: InvoiceListProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
   const handleDeleteClick = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
@@ -115,21 +124,18 @@ export default function InvoiceList({ invoices, onEdit, calculateTotal, onDelete
     console.log("Invoice selected for deletion:", invoice);
   };
 
-const handleDeleteConfirm = async () => {
-  if (selectedInvoice) {
-    await invoiceOperations.deleteInvoice(selectedInvoice._id);
-    console.log("Invoice deleted");
-    onDelete(); // Refresh invoices after deletion
-  } else {
-    console.warn("No invoice selected for deletion!");
-  }
+  const handleDeleteConfirm = async () => {
+    if (selectedInvoice) {
+      await invoiceOperations.deleteInvoice(selectedInvoice._id);
+      console.log("Invoice deleted");
+      onDelete(); // Refresh invoices after deletion
+    } else {
+      console.warn("No invoice selected for deletion!");
+    }
 
-  setIsDeleteDialogOpen(false);
-  setSelectedInvoice(null);
-};
-
-
-
+    setIsDeleteDialogOpen(false);
+    setSelectedInvoice(null);
+  };
 
   return (
     <>

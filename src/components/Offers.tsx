@@ -1,8 +1,20 @@
-'use client';
+"use client";
 
-import { useState, Fragment } from 'react';
-import { Search, Send, MessageSquare, Mail, Phone, User, Users, Check, X, Tag, Filter } from 'lucide-react';
-import { Dialog, Transition, Tab } from '@headlessui/react';
+import { useState, Fragment } from "react";
+import {
+  Search,
+  Send,
+  MessageSquare,
+  Mail,
+  Phone,
+  User,
+  Users,
+  Check,
+  X,
+  Tag,
+  Filter,
+} from "lucide-react";
+import { Dialog, Transition, Tab } from "@headlessui/react";
 
 interface Customer {
   id: string;
@@ -19,92 +31,99 @@ interface Customer {
 // Mock data for development
 const initialCustomers: Customer[] = [
   {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '9876543210',
-    lastPurchase: '2025-03-15',
+    id: "1",
+    name: "John Doe",
+    email: "john@example.com",
+    phone: "9876543210",
+    lastPurchase: "2025-03-15",
     totalSpent: 25000,
     purchaseCount: 3,
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: true
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: true,
   },
   {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    phone: '9876543211',
-    lastPurchase: '2025-03-10',
+    id: "2",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    phone: "9876543211",
+    lastPurchase: "2025-03-10",
     totalSpent: 42000,
     purchaseCount: 5,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: true
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: true,
   },
   {
-    id: '3',
-    name: 'Mike Johnson',
-    email: 'mike@example.com',
-    phone: '9876543212',
-    lastPurchase: '2025-02-28',
+    id: "3",
+    name: "Mike Johnson",
+    email: "mike@example.com",
+    phone: "9876543212",
+    lastPurchase: "2025-02-28",
     totalSpent: 18500,
     purchaseCount: 2,
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: false
+    avatar:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: false,
   },
   {
-    id: '4',
-    name: 'Sarah Williams',
-    email: 'sarah@example.com',
-    phone: '9876543213',
-    lastPurchase: '2025-02-15',
+    id: "4",
+    name: "Sarah Williams",
+    email: "sarah@example.com",
+    phone: "9876543213",
+    lastPurchase: "2025-02-15",
     totalSpent: 35000,
     purchaseCount: 4,
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: false
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: false,
   },
   {
-    id: '5',
-    name: 'David Brown',
-    email: 'david@example.com',
-    phone: '9876543214',
-    lastPurchase: '2025-01-20',
+    id: "5",
+    name: "David Brown",
+    email: "david@example.com",
+    phone: "9876543214",
+    lastPurchase: "2025-01-20",
     totalSpent: 12000,
     purchaseCount: 1,
-    avatar: 'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: true
+    avatar:
+      "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: true,
   },
   {
-    id: '6',
-    name: 'Robert Wilson',
-    email: 'robert@example.com',
-    phone: '9876543215',
-    lastPurchase: '2025-01-15',
+    id: "6",
+    name: "Robert Wilson",
+    email: "robert@example.com",
+    phone: "9876543215",
+    lastPurchase: "2025-01-15",
     totalSpent: 28500,
     purchaseCount: 3,
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: false
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: false,
   },
   {
-    id: '7',
-    name: 'Emily Davis',
-    email: 'emily@example.com',
-    phone: '9876543216',
-    lastPurchase: '2025-01-10',
+    id: "7",
+    name: "Emily Davis",
+    email: "emily@example.com",
+    phone: "9876543216",
+    lastPurchase: "2025-01-10",
     totalSpent: 19200,
     purchaseCount: 2,
-    avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    isOnline: true
+    avatar:
+      "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    isOnline: true,
   },
   {
-    id: '8',
-    name: 'Michael Taylor',
-    email: 'michael@example.com',
-    phone: '9876543217',
-    lastPurchase: '2025-01-05',
+    id: "8",
+    name: "Michael Taylor",
+    email: "michael@example.com",
+    phone: "9876543217",
+    lastPurchase: "2025-01-05",
     totalSpent: 32000,
     purchaseCount: 4,
-    isOnline: false
-  }
+    isOnline: false,
+  },
 ];
 
 interface OfferTemplate {
@@ -118,43 +137,56 @@ interface OfferTemplate {
 // Mock offer templates
 const offerTemplates: OfferTemplate[] = [
   {
-    id: '1',
-    title: 'Summer Sale',
-    message: 'Enjoy 20% off on all water purifiers this summer! Use code SUMMER20 at checkout.',
-    discount: '20%',
-    validUntil: '2025-06-30'
+    id: "1",
+    title: "Summer Sale",
+    message:
+      "Enjoy 20% off on all water purifiers this summer! Use code SUMMER20 at checkout.",
+    discount: "20%",
+    validUntil: "2025-06-30",
   },
   {
-    id: '2',
-    title: 'Service Reminder',
-    message: 'It\'s time for your annual maintenance service. Book now and get 10% off on all replacement parts.',
-    discount: '10%',
-    validUntil: '2025-04-15'
+    id: "2",
+    title: "Service Reminder",
+    message:
+      "It's time for your annual maintenance service. Book now and get 10% off on all replacement parts.",
+    discount: "10%",
+    validUntil: "2025-04-15",
   },
   {
-    id: '3',
-    title: 'Referral Bonus',
-    message: 'Refer a friend and both of you get ₹1000 off on your next purchase!',
-    discount: '₹1000',
-    validUntil: '2025-12-31'
-  }
+    id: "3",
+    title: "Referral Bonus",
+    message:
+      "Refer a friend and both of you get ₹1000 off on your next purchase!",
+    discount: "₹1000",
+    validUntil: "2025-12-31",
+  },
 ];
 
-function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { isOpen: boolean; onClose: () => void; customer?: Customer | null; allCustomers?: boolean }) {
-  const [message, setMessage] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+function WhatsAppDialog({
+  isOpen,
+  onClose,
+  customer,
+  allCustomers = false,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  customer?: Customer | null;
+  allCustomers?: boolean;
+}) {
+  const [message, setMessage] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
 
   const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const templateId = e.target.value;
     if (!templateId) {
-      setMessage('');
-      setSelectedTemplate('');
+      setMessage("");
+      setSelectedTemplate("");
       return;
     }
 
-    const template = offerTemplates.find(t => t.id === templateId);
+    const template = offerTemplates.find((t) => t.id === templateId);
     if (template) {
       setSelectedTemplate(templateId);
       setMessage(template.message);
@@ -166,12 +198,12 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
     if (!message.trim()) return;
 
     setIsSending(true);
-    
+
     // Simulate sending message
     setTimeout(() => {
       setIsSending(false);
       setSendSuccess(true);
-      
+
       // Reset success message after 3 seconds
       setTimeout(() => {
         setSendSuccess(false);
@@ -182,7 +214,7 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
 
   const getWhatsAppLink = (phone: string, text: string) => {
     // Format phone number (remove any non-digit characters)
-    const formattedPhone = phone.replace(/\D/g, '');
+    const formattedPhone = phone.replace(/\D/g, "");
     return `https://wa.me/${formattedPhone}?text=${encodeURIComponent(text)}`;
   };
 
@@ -218,11 +250,11 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
                   className="text-lg font-medium leading-6 text-gray-900 flex items-center"
                 >
                   <MessageSquare className="h-5 w-5 text-green-500 mr-2" />
-                  {allCustomers 
-                    ? 'Send WhatsApp Message to All Customers' 
+                  {allCustomers
+                    ? "Send WhatsApp Message to All Customers"
                     : `Send WhatsApp Message to ${customer?.name}`}
                 </Dialog.Title>
-                
+
                 {customer && !allCustomers && (
                   <div className="mt-4 flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
@@ -235,13 +267,18 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
                           <span className="text-white font-medium">
-                            {customer.name.split(' ').map(n => n[0]).join('')}
+                            {customer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
                           </span>
                         </div>
                       )}
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-900">{customer.name}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {customer.name}
+                      </p>
                       <p className="text-sm text-gray-500">{customer.phone}</p>
                     </div>
                   </div>
@@ -250,14 +287,18 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
                 {allCustomers && (
                   <div className="mt-4 bg-green-50 p-3 rounded-lg">
                     <p className="text-sm text-green-800">
-                      This message will be sent to all {initialCustomers.length} customers in your database.
+                      This message will be sent to all {initialCustomers.length}{" "}
+                      customers in your database.
                     </p>
                   </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="mt-6">
                   <div className="mb-4">
-                    <label htmlFor="template" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="template"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Select Offer Template (Optional)
                     </label>
                     <select
@@ -267,7 +308,7 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                     >
                       <option value="">Select a template</option>
-                      {offerTemplates.map(template => (
+                      {offerTemplates.map((template) => (
                         <option key={template.id} value={template.id}>
                           {template.title} ({template.discount} off)
                         </option>
@@ -276,7 +317,10 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Message
                     </label>
                     <textarea
@@ -303,7 +347,7 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
                       </a>
                     </div>
                   )}
-                  
+
                   <div className="mt-6 flex justify-end space-x-3">
                     <button
                       type="button"
@@ -345,23 +389,33 @@ function WhatsAppDialog({ isOpen, onClose, customer, allCustomers = false }: { i
   );
 }
 
-function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOpen: boolean; onClose: () => void; customer?: Customer | null; allCustomers?: boolean }) {
-  const [subject, setSubject] = useState('');
-  const [message, setMessage] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+function EmailDialog({
+  isOpen,
+  onClose,
+  customer,
+  allCustomers = false,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  customer?: Customer | null;
+  allCustomers?: boolean;
+}) {
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
 
   const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const templateId = e.target.value;
     if (!templateId) {
-      setSubject('');
-      setMessage('');
-      setSelectedTemplate('');
+      setSubject("");
+      setMessage("");
+      setSelectedTemplate("");
       return;
     }
 
-    const template = offerTemplates.find(t => t.id === templateId);
+    const template = offerTemplates.find((t) => t.id === templateId);
     if (template) {
       setSelectedTemplate(templateId);
       setSubject(template.title);
@@ -374,12 +428,12 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
     if (!subject.trim() || !message.trim()) return;
 
     setIsSending(true);
-    
+
     // Simulate sending email
     setTimeout(() => {
       setIsSending(false);
       setSendSuccess(true);
-      
+
       // Reset success message after 3 seconds
       setTimeout(() => {
         setSendSuccess(false);
@@ -424,11 +478,11 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                   className="text-lg font-medium leading-6 text-gray-900 flex items-center"
                 >
                   <Mail className="h-5 w-5 text-blue-500 mr-2" />
-                  {allCustomers 
-                    ? 'Send Email to All Customers' 
+                  {allCustomers
+                    ? "Send Email to All Customers"
                     : `Send Email to ${customer?.name}`}
                 </Dialog.Title>
-                
+
                 {customer && !allCustomers && (
                   <div className="mt-4 flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
@@ -441,13 +495,18 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
                           <span className="text-white font-medium">
-                            {customer.name.split(' ').map(n => n[0]).join('')}
+                            {customer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
                           </span>
                         </div>
                       )}
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-900">{customer.name}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {customer.name}
+                      </p>
                       <p className="text-sm text-gray-500">{customer.email}</p>
                     </div>
                   </div>
@@ -456,14 +515,18 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                 {allCustomers && (
                   <div className="mt-4 bg-blue-50 p-3 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      This email will be sent to all {initialCustomers.length} customers in your database.
+                      This email will be sent to all {initialCustomers.length}{" "}
+                      customers in your database.
                     </p>
                   </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="mt-6">
                   <div className="mb-4">
-                    <label htmlFor="template" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="template"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Select Offer Template (Optional)
                     </label>
                     <select
@@ -473,7 +536,7 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
                     >
                       <option value="">Select a template</option>
-                      {offerTemplates.map(template => (
+                      {offerTemplates.map((template) => (
                         <option key={template.id} value={template.id}>
                           {template.title} ({template.discount} off)
                         </option>
@@ -482,7 +545,10 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="subject"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Subject
                     </label>
                     <input
@@ -497,7 +563,10 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Message
                     </label>
                     <textarea
@@ -524,7 +593,7 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
                       </a>
                     </div>
                   )}
-                  
+
                   <div className="mt-6 flex justify-end space-x-3">
                     <button
                       type="button"
@@ -567,33 +636,37 @@ function EmailDialog({ isOpen, onClose, customer, allCustomers = false }: { isOp
 }
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Offers() {
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [isBulkWhatsAppDialogOpen, setIsBulkWhatsAppDialogOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null,
+  );
+  const [isBulkWhatsAppDialogOpen, setIsBulkWhatsAppDialogOpen] =
+    useState(false);
   const [isBulkEmailDialogOpen, setIsBulkEmailDialogOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
 
   const getFilteredCustomers = () => {
     // First filter by search term
-    const searchFiltered = customers.filter(customer =>
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone.includes(searchTerm)
+    const searchFiltered = customers.filter(
+      (customer) =>
+        customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.phone.includes(searchTerm),
     );
-    
+
     // Then filter by tab (All, Online, Offline)
     if (selectedTab === 1) {
-      return searchFiltered.filter(customer => customer.isOnline);
+      return searchFiltered.filter((customer) => customer.isOnline);
     } else if (selectedTab === 2) {
-      return searchFiltered.filter(customer => !customer.isOnline);
+      return searchFiltered.filter((customer) => !customer.isOnline);
     } else {
       return searchFiltered;
     }
@@ -602,10 +675,10 @@ export default function Offers() {
   const filteredCustomers = getFilteredCustomers();
 
   const handleCustomerSelection = (customer: Customer) => {
-    setSelectedCustomers(prev => {
-      const isSelected = prev.some(c => c.id === customer.id);
+    setSelectedCustomers((prev) => {
+      const isSelected = prev.some((c) => c.id === customer.id);
       if (isSelected) {
-        return prev.filter(c => c.id !== customer.id);
+        return prev.filter((c) => c.id !== customer.id);
       } else {
         return [...prev, customer];
       }
@@ -639,10 +712,10 @@ export default function Offers() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -664,7 +737,8 @@ export default function Offers() {
         <div className="sm:flex-auto">
           <h2 className="text-xl font-semibold text-gray-900">Send Offers</h2>
           <p className="mt-2 text-sm text-gray-700">
-            Send promotional offers and discounts to your customers via WhatsApp or email
+            Send promotional offers and discounts to your customers via WhatsApp
+            or email
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex space-x-3">
@@ -705,10 +779,10 @@ export default function Offers() {
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'rounded-md px-3 py-2 text-sm font-medium flex items-center',
+                  "rounded-md px-3 py-2 text-sm font-medium flex items-center",
                   selected
-                    ? 'bg-white text-cyan-700 shadow'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? "bg-white text-cyan-700 shadow"
+                    : "text-gray-500 hover:text-gray-700",
                 )
               }
             >
@@ -718,10 +792,10 @@ export default function Offers() {
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'rounded-md px-3 py-2 text-sm font-medium flex items-center',
+                  "rounded-md px-3 py-2 text-sm font-medium flex items-center",
                   selected
-                    ? 'bg-white text-cyan-700 shadow'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? "bg-white text-cyan-700 shadow"
+                    : "text-gray-500 hover:text-gray-700",
                 )
               }
             >
@@ -731,10 +805,10 @@ export default function Offers() {
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'rounded-md px-3 py-2 text-sm font-medium flex items-center',
+                  "rounded-md px-3 py-2 text-sm font-medium flex items-center",
                   selected
-                    ? 'bg-white text-cyan-700 shadow'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? "bg-white text-cyan-700 shadow"
+                    : "text-gray-500 hover:text-gray-700",
                 )
               }
             >
@@ -747,7 +821,7 @@ export default function Offers() {
         <Tab.Panels className="mt-4">
           {/* All Customers Panel */}
           <Tab.Panel>
-            <CustomerTable 
+            <CustomerTable
               customers={filteredCustomers}
               selectedCustomers={selectedCustomers}
               handleSelectAllCustomers={handleSelectAllCustomers}
@@ -761,7 +835,7 @@ export default function Offers() {
 
           {/* Online Customers Panel */}
           <Tab.Panel>
-            <CustomerTable 
+            <CustomerTable
               customers={filteredCustomers}
               selectedCustomers={selectedCustomers}
               handleSelectAllCustomers={handleSelectAllCustomers}
@@ -775,7 +849,7 @@ export default function Offers() {
 
           {/* Offline Customers Panel */}
           <Tab.Panel>
-            <CustomerTable 
+            <CustomerTable
               customers={filteredCustomers}
               selectedCustomers={selectedCustomers}
               handleSelectAllCustomers={handleSelectAllCustomers}
@@ -803,8 +877,12 @@ export default function Offers() {
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="text-lg font-medium text-gray-900">{template.title}</h4>
-                  <p className="mt-1 text-sm text-gray-500">{template.message}</p>
+                  <h4 className="text-lg font-medium text-gray-900">
+                    {template.title}
+                  </h4>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {template.message}
+                  </p>
                 </div>
                 <div className="bg-cyan-100 text-cyan-800 px-2.5 py-0.5 rounded-full text-xs font-medium">
                   {template.discount} off
@@ -855,7 +933,7 @@ function CustomerTable({
   handleOpenWhatsAppDialog,
   handleOpenEmailDialog,
   formatDate,
-  getCustomerTypeLabel
+  getCustomerTypeLabel,
 }: {
   customers: Customer[];
   selectedCustomers: Customer[];
@@ -878,15 +956,41 @@ function CustomerTable({
                     <input
                       type="checkbox"
                       className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
-                      checked={selectedCustomers.length === customers.length && customers.length > 0}
+                      checked={
+                        selectedCustomers.length === customers.length &&
+                        customers.length > 0
+                      }
                       onChange={handleSelectAllCustomers}
                     />
                   </th>
-                  <th scope="col" className="py-3.5 pl-10 pr-3 text-left text-sm font-semibold text-gray-900">Customer</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Contact</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Purchase History</th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Type</th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6 text-right text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-10 pr-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Customer
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Contact
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Purchase History
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Type
+                  </th>
+                  <th
+                    scope="col"
+                    className="relative py-3.5 pl-3 pr-4 sm:pr-6 text-right text-sm font-semibold text-gray-900"
+                  >
                     Actions
                   </th>
                 </tr>
@@ -896,18 +1000,31 @@ function CustomerTable({
                   <tr>
                     <td colSpan={6} className="py-8 text-center">
                       <User className="mx-auto h-12 w-12 text-gray-300" />
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">No customers found</h3>
-                      <p className="mt-1 text-sm text-gray-500">Try adjusting your search terms or filter.</p>
+                      <h3 className="mt-2 text-sm font-medium text-gray-900">
+                        No customers found
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Try adjusting your search terms or filter.
+                      </p>
                     </td>
                   </tr>
                 ) : (
                   customers.map((customer) => (
-                    <tr key={customer.id} className={selectedCustomers.some(c => c.id === customer.id) ? 'bg-cyan-50' : undefined}>
+                    <tr
+                      key={customer.id}
+                      className={
+                        selectedCustomers.some((c) => c.id === customer.id)
+                          ? "bg-cyan-50"
+                          : undefined
+                      }
+                    >
                       <td className="relative py-4 pl-3 pr-4 sm:pr-6">
                         <input
                           type="checkbox"
                           className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
-                          checked={selectedCustomers.some(c => c.id === customer.id)}
+                          checked={selectedCustomers.some(
+                            (c) => c.id === customer.id,
+                          )}
                           onChange={() => handleCustomerSelection(customer)}
                         />
                       </td>
@@ -923,13 +1040,18 @@ function CustomerTable({
                             ) : (
                               <div className="h-10 w-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center">
                                 <span className="text-white font-medium">
-                                  {customer.name.split(' ').map(n => n[0]).join('')}
+                                  {customer.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
                                 </span>
                               </div>
                             )}
                           </div>
                           <div className="ml-4">
-                            <div className="font-medium text-gray-900">{customer.name}</div>
+                            <div className="font-medium text-gray-900">
+                              {customer.name}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -944,9 +1066,12 @@ function CustomerTable({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        <div className="text-gray-900">₹{customer.totalSpent.toLocaleString()}</div>
+                        <div className="text-gray-900">
+                          ₹{customer.totalSpent.toLocaleString()}
+                        </div>
                         <div className="text-gray-500">
-                          {customer.purchaseCount} orders • Last: {formatDate(customer.lastPurchase)}
+                          {customer.purchaseCount} orders • Last:{" "}
+                          {formatDate(customer.lastPurchase)}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">

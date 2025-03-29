@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { authService } from '@/services/api';
+import { create } from "zustand";
+import { authService } from "@/services/api";
 
 interface User {
   id: string;
@@ -28,15 +28,15 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ loading: true, error: null });
       // For demo purposes, we'll simulate a successful login
       // In production, this would make an actual API call
-      if (email === 'demo@aquakart.com' && password === 'demo123') {
+      if (email === "demo@aquakart.com" && password === "demo123") {
         set({
           isAuthenticated: true,
-          user: { id: '1', email },
+          user: { id: "1", email },
           loading: false,
-          error: null
+          error: null,
         });
       } else {
-        throw new Error('Invalid credentials');
+        throw new Error("Invalid credentials");
       }
     } catch (error: any) {
       set({ error: error.message, loading: false });
@@ -69,7 +69,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ loading: true });
       // For demo purposes, we'll check local storage
       // In production, this would verify with the backend
-      const storedUser = localStorage.getItem('user');
+      const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const user = JSON.parse(storedUser);
         set({

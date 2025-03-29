@@ -17,7 +17,7 @@ export default function PaginationControls({
   startIndex,
   endIndex,
   onPageChange,
-  onItemsPerPageChange
+  onItemsPerPageChange,
 }: PaginationControlsProps) {
   const pageNumbers = [];
   const maxVisiblePages = 5;
@@ -51,7 +51,8 @@ export default function PaginationControls({
           entries
         </span>
         <span className="text-sm text-gray-700">
-          Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} entries
+          Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+          {totalItems} entries
         </span>
       </div>
       <div className="flex items-center space-x-2">
@@ -68,8 +69,8 @@ export default function PaginationControls({
             onClick={() => onPageChange(number)}
             className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
               currentPage === number
-                ? 'z-10 bg-cyan-50 border-cyan-500 text-cyan-600'
-                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                ? "z-10 bg-cyan-50 border-cyan-500 text-cyan-600"
+                : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
             } border rounded-md`}
           >
             {number}

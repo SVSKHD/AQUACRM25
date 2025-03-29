@@ -1,11 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Plus, Search, FileText, IndianRupee, Calendar, Filter, Download, FileSpreadsheet, File as FilePdf } from 'lucide-react';
-import { Tab } from '@headlessui/react';
-import { invoiceOperations, type Invoice } from '@/services/invoices';
-import { exportService } from '@/services/export';
-import InvoiceDialog from './invoices/InvoiceDialog';
-import InvoiceList from './invoices/InvoiceList';
-import PaginationControls from './invoices/PaginationControls';
+import { useState, useEffect } from "react";
+import {
+  Plus,
+  Search,
+  FileText,
+  IndianRupee,
+  Calendar,
+  Filter,
+  Download,
+  FileSpreadsheet,
+  File as FilePdf,
+} from "lucide-react";
+import { Tab } from "@headlessui/react";
+import { invoiceOperations, type Invoice } from "@/services/invoices";
+import { exportService } from "@/services/export";
+import InvoiceDialog from "./invoices/InvoiceDialog";
+import InvoiceList from "./invoices/InvoiceList";
+import PaginationControls from "./invoices/PaginationControls";
 
 interface TabItem {
   name: string;
@@ -13,20 +23,23 @@ interface TabItem {
 }
 
 const tabs: TabItem[] = [
-  { name: 'All', filter: () => true },
-  { name: 'Regular', filter: (invoice) => !invoice.gst && !invoice.po && !invoice.quotation },
-  { name: 'GST', filter: (invoice) => invoice.gst },
-  { name: 'PO', filter: (invoice) => invoice.po },
-  { name: 'Quotation', filter: (invoice) => invoice.quotation }
+  { name: "All", filter: () => true },
+  {
+    name: "Regular",
+    filter: (invoice) => !invoice.gst && !invoice.po && !invoice.quotation,
+  },
+  { name: "GST", filter: (invoice) => invoice.gst },
+  { name: "PO", filter: (invoice) => invoice.po },
+  { name: "Quotation", filter: (invoice) => invoice.quotation },
 ];
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 // Helper function to format date to YYYY-MM-DD
 const formatDateForInput = (date: Date) => {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 
 // Get first and last day of current month
@@ -38,19 +51,19 @@ const getMonthRange = (date: Date) => {
 
 export default function Invoices() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState(0);
-  
+
   // Date filter states
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -63,14 +76,14 @@ export default function Invoices() {
     try {
       setLoading(true);
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const response = await invoiceOperations.getInvoices();
       setInvoices(response.data);
       setError(null);
     } catch (err) {
-      console.error('Error fetching invoices:', err);
-      setError('Failed to load invoices. Using demo data.');
+      console.error("Error fetching invoices:", err);
+      setError("Failed to load invoices. Using demo data.");
     } finally {
       setLoading(false);
     }
@@ -78,23 +91,23 @@ export default function Invoices() {
 
   const handleMonthChange = (month: string) => {
     if (month) {
-      const [year, monthNum] = month.split('-');
+      const [year, monthNum] = month.split("-");
       const date = new Date(parseInt(year), parseInt(monthNum) - 1);
       const { firstDay, lastDay } = getMonthRange(date);
       setStartDate(formatDateForInput(firstDay));
       setEndDate(formatDateForInput(lastDay));
       setSelectedMonth(month);
     } else {
-      setStartDate('');
-      setEndDate('');
-      setSelectedMonth('');
+      setStartDate("");
+      setEndDate("");
+      setSelectedMonth("");
     }
   };
 
   const clearFilters = () => {
-    setStartDate('');
-    setEndDate('');
-    setSelectedMonth('');
+    setStartDate("");
+    setEndDate("");
+    setSelectedMonth("");
   };
 
   const handleExportToExcel = () => {
@@ -107,15 +120,20 @@ export default function Invoices() {
 
   const filteredInvoices = invoices
     .filter(tabs[selectedTab].filter)
-    .filter(invoice => {
+    .filter((invoice) => {
       // Text search filter
-      const matchesSearch = invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        invoice.customerDetails.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch =
+        invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        invoice.customerDetails.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
       // Date range filter
       let matchesDateRange = true;
       if (startDate && endDate) {
-        const invoiceDate = new Date(invoice.date.split('/').reverse().join('-'));
+        const invoiceDate = new Date(
+          invoice.date.split("/").reverse().join("-"),
+        );
         const start = new Date(startDate);
         const end = new Date(endDate);
         matchesDateRange = invoiceDate >= start && invoiceDate <= end;
@@ -150,13 +168,14 @@ export default function Invoices() {
     setIsDialogOpen(true);
   };
 
-  const calculateTotal = (products: Invoice['products']) => {
-    return products.reduce((sum, product) => sum + (product.productPrice), 0);
+  const calculateTotal = (products: Invoice["products"]) => {
+    return products.reduce((sum, product) => sum + product.productPrice, 0);
   };
 
   // Calculate total statistics
-  const totalInvoiceValue = invoices.reduce((sum, invoice) => 
-    sum + calculateTotal(invoice.products), 0
+  const totalInvoiceValue = invoices.reduce(
+    (sum, invoice) => sum + calculateTotal(invoice.products),
+    0,
   );
 
   if (loading) {
@@ -164,7 +183,9 @@ export default function Invoices() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto"></div>
-          <p className="mt-4 text-sm text-gray-500 font-mono">Loading invoices...</p>
+          <p className="mt-4 text-sm text-gray-500 font-mono">
+            Loading invoices...
+          </p>
         </div>
       </div>
     );
@@ -174,7 +195,9 @@ export default function Invoices() {
     <div>
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h2 className="text-xl font-semibold text-gray-900 font-mono">Invoices</h2>
+          <h2 className="text-xl font-semibold text-gray-900 font-mono">
+            Invoices
+          </h2>
           <p className="mt-2 text-sm text-gray-700 font-mono">
             Manage customer invoices and payment status
           </p>
@@ -222,8 +245,12 @@ export default function Invoices() {
               <FileText className="h-6 w-6 text-cyan-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">Total Invoices</p>
-              <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">{invoices.length}</h3>
+              <p className="text-sm font-medium text-gray-500 font-mono">
+                Total Invoices
+              </p>
+              <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
+                {invoices.length}
+              </h3>
             </div>
           </div>
           <div className="mt-4">
@@ -246,7 +273,9 @@ export default function Invoices() {
               <IndianRupee className="h-6 w-6 text-green-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">Total Value</p>
+              <p className="text-sm font-medium text-gray-500 font-mono">
+                Total Value
+              </p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
                 ₹{totalInvoiceValue.toLocaleString()}
               </h3>
@@ -285,7 +314,7 @@ export default function Invoices() {
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
             >
               <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? 'Hide Filters' : 'Show Filters'}
+              {showFilters ? "Hide Filters" : "Show Filters"}
             </button>
 
             <Tab.List className="flex space-x-2 rounded-lg bg-gray-100 p-1">
@@ -294,10 +323,10 @@ export default function Invoices() {
                   key={tab.name}
                   className={({ selected }) =>
                     classNames(
-                      'rounded-md px-3 py-2 text-sm font-medium font-mono',
+                      "rounded-md px-3 py-2 text-sm font-medium font-mono",
                       selected
-                        ? 'bg-white text-cyan-700 shadow'
-                        : 'text-gray-500 hover:text-gray-700'
+                        ? "bg-white text-cyan-700 shadow"
+                        : "text-gray-500 hover:text-gray-700",
                     )
                   }
                 >
@@ -312,7 +341,9 @@ export default function Invoices() {
             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">Month</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">
+                    Month
+                  </label>
                   <input
                     type="month"
                     value={selectedMonth}
@@ -321,25 +352,29 @@ export default function Invoices() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">Start Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => {
                       setStartDate(e.target.value);
-                      setSelectedMonth('');
+                      setSelectedMonth("");
                     }}
                     className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">End Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 font-mono">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => {
                       setEndDate(e.target.value);
-                      setSelectedMonth('');
+                      setSelectedMonth("");
                     }}
                     className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 font-mono"
                   />
@@ -352,9 +387,7 @@ export default function Invoices() {
                 >
                   Clear Filters
                 </button>
-                <button
-                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono"
-                >
+                <button className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 font-mono">
                   Apply Filter
                 </button>
               </div>
@@ -367,8 +400,8 @@ export default function Invoices() {
             <Tab.Panel
               key={idx}
               className={classNames(
-                'rounded-xl bg-white',
-                'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60'
+                "rounded-xl bg-white",
+                "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
               )}
             >
               <div className="mt-4 flex flex-col">
@@ -408,8 +441,8 @@ export default function Invoices() {
         onClose={() => {
           setIsDialogOpen(false);
           setSelectedInvoice(null);
-          fetchInvoices();
         }}
+        refresh={()=>fetchInvoices()}
         invoice={selectedInvoice}
       />
     </div>

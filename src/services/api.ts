@@ -43,18 +43,17 @@ export const authService = {
       // }
 
       // Actual API implementation (commented out for demo)
-      
-      const response = await api.post('/crm/user/login', {
+
+      const response = await api.post("/crm/user/login", {
         email,
         password,
       });
 
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem("token", response.data.token);
       }
 
       return response.data;
-      
     } catch (error: any) {
       const message =
         error.response?.data?.message || error.message || "Failed to sign in";
