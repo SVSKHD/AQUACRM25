@@ -12,9 +12,15 @@ export const exportService = {
       "Customer Name": invoice.customerDetails.name,
       "Customer Phone": invoice.customerDetails.phone,
       "Customer Email": invoice.customerDetails.email,
-      
-      "Base Price": invoice.products.reduce((sum, p) => sum + priceUtils.getBasePrice(p.productPrice), 0),
-      "GST Value":invoice.products.reduce((sum, p) => sum + priceUtils.getGSTValue(p.productPrice), 0),
+
+      "Base Price": invoice.products.reduce(
+        (sum, p) => sum + priceUtils.getBasePrice(p.productPrice),
+        0,
+      ),
+      "GST Value": invoice.products.reduce(
+        (sum, p) => sum + priceUtils.getGSTValue(p.productPrice),
+        0,
+      ),
       "Total Amount": invoice.products.reduce(
         (sum, p) => sum + p.productPrice,
         0,
@@ -51,10 +57,18 @@ export const exportService = {
       invoice.invoiceNo,
       invoice.date,
       invoice.customerDetails.name,
-     
-       "Rs. " + invoice.products.reduce((sum, p) => sum + priceUtils.getBasePrice(p.productPrice), 0),
-       "Rs. " + invoice.products.reduce((sum, p) => sum + priceUtils.getGSTValue(p.productPrice), 0),
-        "Rs. " + invoice.products.reduce((sum, p) => sum + p.productPrice, 0),
+
+      "Rs. " +
+        invoice.products.reduce(
+          (sum, p) => sum + priceUtils.getBasePrice(p.productPrice),
+          0,
+        ),
+      "Rs. " +
+        invoice.products.reduce(
+          (sum, p) => sum + priceUtils.getGSTValue(p.productPrice),
+          0,
+        ),
+      "Rs. " + invoice.products.reduce((sum, p) => sum + p.productPrice, 0),
       invoice.paidStatus,
       [
         invoice.gst ? "GST" : "",
@@ -66,7 +80,18 @@ export const exportService = {
     ]);
 
     autoTable(doc, {
-      head: [["Invoice No", "Date", "Customer", "Base Price", "GST Value", "Amount", "Status", "Type"]],
+      head: [
+        [
+          "Invoice No",
+          "Date",
+          "Customer",
+          "Base Price",
+          "GST Value",
+          "Amount",
+          "Status",
+          "Type",
+        ],
+      ],
       body: tableData,
       startY: 30,
       styles: { fontSize: 8 },

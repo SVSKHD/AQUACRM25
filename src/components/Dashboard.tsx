@@ -296,8 +296,8 @@ export default function Dashboard() {
     }
   }, [selectedIndex]);
 
-  const userRole = user?.role || "Admin";
-
+  const userRole = (user as { role?: string })?.role || "Admin";
+  const userEmail = (user as {email?:string})?.email || 'Aquakart'
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
       {/* Header */}
@@ -326,7 +326,7 @@ export default function Dashboard() {
                   <div className="flex items-center">
                     <Mail className="h-4 w-4 text-cyan-600 mr-1.5" />
                     <span className="font-mono font-medium text-gray-800">
-                      {user?.email}
+                      {userEmail}
                     </span>
                   </div>
                   <div className="flex items-center mt-0.5">

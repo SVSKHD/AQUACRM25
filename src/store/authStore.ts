@@ -12,12 +12,11 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set: any) => ({
   isAuthenticated: false,
   user: null,
   loading: false,
@@ -38,17 +37,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       } else {
         throw new Error("Invalid credentials");
       }
-    } catch (error: any) {
-      set({ error: error.message, loading: false });
-      throw error;
-    }
-  },
-
-  signUp: async (email: string, password: string) => {
-    try {
-      set({ loading: true, error: null });
-      const data = await authService.signUp(email, password);
-      set({ isAuthenticated: true, user: data.user, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
       throw error;

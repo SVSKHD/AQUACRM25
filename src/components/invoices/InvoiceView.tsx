@@ -17,6 +17,13 @@ import {
   FileDown,
 } from "lucide-react";
 import jsPDF from "jspdf";
+
+// Extend jsPDF to include lastAutoTable
+declare module "jspdf" {
+  interface jsPDF {
+    lastAutoTable?: { finalY: number };
+  }
+}
 import autoTable from "jspdf-autotable";
 import type { Invoice } from "@/services/invoices";
 import { invoiceOperations } from "@/services/invoices";
@@ -136,7 +143,7 @@ export default function InvoiceView() {
         `Address: ${invoice.customerDetails.address}`,
         90,
       );
-      customerAddressLines.forEach((line, idx) => {
+      customerAddressLines.forEach((line:any, idx:any) => {
         doc.text(line, 15, 70 + idx * 5);
       });
 
@@ -206,7 +213,7 @@ export default function InvoiceView() {
       });
 
       // Terms and Conditions
-      const finalY = doc.lastAutoTable.finalY || startY;
+      const finalY = doc.lastAutoTable?.finalY ?? startY;
       doc.setFontSize(12);
       doc.text("Terms and Conditions", 15, finalY + 15);
       doc.setFontSize(8);
@@ -215,7 +222,7 @@ export default function InvoiceView() {
       termsAndConditions.forEach((term, index) => {
         doc.text(`${index + 1}. ${term.title}:`, 15, termsY);
         const splitDescription = doc.splitTextToSize(term.description, 180);
-        splitDescription.forEach((line) => {
+        splitDescription.forEach((line:any) => {
           doc.text(line, 20, (termsY += 5));
         });
         termsY += 7;
@@ -276,7 +283,7 @@ export default function InvoiceView() {
 
   const calculateGST = () => {
     const subtotal = calculateSubtotal();
-    return invoice.gst ? subtotal * 0.18 : 0; // Assuming 18% GST
+    return invoice.gst ? (subtotal ?? 0) * 0.18 : 0; // Assuming 18% GST
   };
 
   return (
@@ -481,7 +488,7 @@ export default function InvoiceView() {
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
                     <span>
-                      ₹{BasePrice(calculateSubtotal()).toLocaleString()}
+                      ₹{BasePrice(calculateSubtotal() ?? 0).toLocaleString()}
                     </span>
                   </div>
                   {invoice.gst && (
@@ -489,13 +496,13 @@ export default function InvoiceView() {
                       <span>GST (18%)</span>
                       <span>
                         ₹
-                        {gstValueGenerate(calculateSubtotal()).toLocaleString()}
+                        {gstValueGenerate(calculateSubtotal() ?? 0).toLocaleString()}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between text-lg font-semibold text-gray-900 pt-3 border-t border-gray-200">
                     <span>Total</span>
-                    <span>₹{calculateSubtotal().toLocaleString()}</span>
+                    <span>₹{(calculateSubtotal() ?? 0).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

@@ -139,13 +139,12 @@ export default function InvoiceDialog({
           formData,
           invoice._id,
         );
-        console.log("Updated invoice:", res?._id);
+  
         toast.success("Invoice updated successfully", {
           description: "The invoice has been updated.",
         });
       } else {
         const res = await invoiceOperations.createInvoice(formData);
-        console.log("Created invoice:", res?._id);
         toast.success("Invoice created successfully", {
           description: "The invoice has been created.",
         });

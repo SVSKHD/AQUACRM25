@@ -10,13 +10,13 @@ COPY package*.json npm-shrinkwrap.json* ./
 # Install PM2 globally
 RUN npm install -g pm2
 
-# Install dependencies
-RUN npm install --production
+# Install ALL dependencies including devDependencies
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the application (tsc + vite)
 RUN npm run build
 
 # Expose the port the app runs on

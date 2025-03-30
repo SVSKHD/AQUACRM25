@@ -233,8 +233,6 @@ export default function Invoices() {
 
       {/* Statistics Cards */}
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
-       
-          
         <div className="bg-white p-6 rounded-lg shadow-lg shadow-cyan-100/50 border border-cyan-100">
           <div className="flex items-center">
             <div className="p-3 rounded-full bg-cyan-100">
@@ -255,15 +253,18 @@ export default function Invoices() {
                 {tabs.map((tab, index) => (
                   <span key={tab.name} className="flex items-center">
                     {index > 0 && <span className="mx-2">•</span>}
-                    {tab.name}: {(showFilters ? filteredInvoices : invoices).filter(tab.filter).length}
+                    {tab.name}:{" "}
+                    {
+                      (showFilters ? filteredInvoices : invoices).filter(
+                        tab.filter,
+                      ).length
+                    }
                   </span>
                 ))}
               </span>
             </div>
           </div>
         </div>
-      
-        
 
         <div className="bg-white p-6 rounded-lg shadow-lg shadow-cyan-100/50 border border-cyan-100">
           <div className="flex items-center">
@@ -282,13 +283,17 @@ export default function Invoices() {
           <div className="mt-4">
             <div className="flex items-center text-sm text-gray-500 font-mono">
               <span>Average per invoice: </span>
-                <span className="ml-1 font-semibold text-gray-900">
-                ₹{(totalInvoiceValue / ((showFilters ? filteredInvoices.length : invoices.length) || 1)).toLocaleString()}
-                </span>
+              <span className="ml-1 font-semibold text-gray-900">
+                ₹
+                {(
+                  totalInvoiceValue /
+                  ((showFilters ? filteredInvoices.length : invoices.length) ||
+                    1)
+                ).toLocaleString()}
+              </span>
             </div>
           </div>
         </div>
-      
       </div>
 
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>

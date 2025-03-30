@@ -130,7 +130,7 @@ export default function InvoiceList({
     if (selectedInvoice) {
       await invoiceOperations.deleteInvoice(selectedInvoice._id);
       toast.success("Invoice deleted successfully");
-      onDelete(); 
+      onDelete();
     } else {
       toast.error("please try again");
       console.warn("No invoice selected for deletion!");

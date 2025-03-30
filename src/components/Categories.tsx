@@ -382,7 +382,7 @@ export default function Categories() {
                   ))}
                 </div>
               </div>
-              <div className="mt-4 flex items-center justify-end">
+              {/* <div className="mt-4 flex items-center justify-end">
                 <button
                   onClick={() => toggleExpand(category._id)}
                   className="text-sm text-cyan-600 hover:text-cyan-700"
@@ -391,13 +391,13 @@ export default function Categories() {
                     ? "Hide Subcategories"
                     : "Show Subcategories"}
                 </button>
-              </div>
+              </div> */}
             </div>
-            {expandedCategories.includes(category._id) && (
+            {/* {expandedCategories.includes(category._id) && (
               <SubCategories
                 categoryId={parseInt(category._id.slice(-6), 16)}
               />
-            )}
+            )} */}
           </div>
         ))}
       </div>

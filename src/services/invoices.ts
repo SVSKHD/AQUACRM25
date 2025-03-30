@@ -198,7 +198,7 @@ export const invoiceOperations = {
     }
   },
 
-  getInvoiceById: async (invoiceId: any): Promise<Invoice | null> => {
+  getInvoiceById: async (invoiceId: any): Promise<Invoice | any> => {
     try {
       const response = await axios.get<Invoice>(
         `${BASE_URL}/crm/invoice/${invoiceId}`,
