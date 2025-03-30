@@ -135,7 +135,10 @@ export default function InvoiceDialog({
     e.preventDefault();
     try {
       if (invoice) {
-        const res = await invoiceOperations.updateInvoice(formData, invoice._id);
+        const res = await invoiceOperations.updateInvoice(
+          formData,
+          invoice._id,
+        );
         console.log("Updated invoice:", res?._id);
         toast.success("Invoice updated successfully", {
           description: "The invoice has been updated.",

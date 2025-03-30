@@ -12,7 +12,7 @@ const InvoiceOprations = {
       },
     });
   },
-  updateInvoice: async (invoice: any, id:any) => {
+  updateInvoice: async (invoice: any, id: any) => {
     await axios.put(`${BASE_URL}/crm/update/invoice/${id}`, invoice, {
       headers: {
         "Content-Type": "application/json",

@@ -13,7 +13,7 @@ root.render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <Toast/>
+        <Toast />
         <App />
       </PersistGate>
     </Provider>

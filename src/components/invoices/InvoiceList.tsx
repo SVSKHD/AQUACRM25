@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { invoiceOperations, type Invoice } from "@/services/invoices";
 import { toast } from "@/components/ui/toast";
+import NotifyOperations from "@/services/notify";
+
 interface InvoiceListProps {
   invoices: Invoice[];
   onEdit: (invoice: Invoice) => void;
@@ -127,8 +129,8 @@ export default function InvoiceList({
   const handleDeleteConfirm = async () => {
     if (selectedInvoice) {
       await invoiceOperations.deleteInvoice(selectedInvoice._id);
-      toast.success("Invoice deleted successfully")
-      onDelete(); // Refresh invoices after deletion
+      toast.success("Invoice deleted successfully");
+      onDelete(); 
     } else {
       toast.error("please try again");
       console.warn("No invoice selected for deletion!");
@@ -136,6 +138,28 @@ export default function InvoiceList({
 
     setIsDeleteDialogOpen(false);
     setSelectedInvoice(null);
+  };
+
+  const handleSend = (id: any) => {
+    const invoiceId = id._id;
+    const invoice = `https://admin.aquakart.co.in/invoice/${invoiceId}`;
+    const message = `Hello Dear "${id.customerDetails.name}",  
+we welcome you to **Aquakart Family**.  
+
+Here is your live invoice link: ${invoice}.  
+
+**Please save contact to access the invoice.**  
+
+We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
+    NotifyOperations.sendWhatsApp(id?.customerDetails.phone, message)
+      .then((res) => {
+        if (res) {
+          toast.success("succesfully Sent Invoice");
+        }
+      })
+      .catch((err) => {
+        toast.error("something problem", err);
+      });
   };
 
   return (
@@ -253,6 +277,7 @@ export default function InvoiceList({
                   <button
                     className="text-blue-600 hover:text-blue-900 bg-blue-50 p-2 rounded-full"
                     title="Send Invoice"
+                    onClick={() => handleSend(invoice)}
                   >
                     <Send className="h-4 w-4" />
                   </button>
