@@ -21,5 +21,14 @@ const InvoiceOprations = {
       },
     });
   },
+  getInvoicesFilter: async (type:string, value:any) => {
+     await axios.get(`${BASE_URL}/crm/admin/invoice/dates?${type}=${value}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Accept: "application/json",
+      },
+    });
+  }
 };
 export default InvoiceOprations;

@@ -75,9 +75,7 @@ export default function Invoices() {
   const fetchInvoices = async () => {
     try {
       setLoading(true);
-      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const response = await invoiceOperations.getInvoices();
       setInvoices(response.data);
       setError(null);
@@ -111,24 +109,21 @@ export default function Invoices() {
   };
 
   const handleExportToExcel = () => {
-    exportService.toExcel(filteredInvoices);
+    exportService.toExcel(showFilters ? filteredInvoices : invoices);
   };
 
   const handleExportToPDF = () => {
-    exportService.toPDF(filteredInvoices);
+    exportService.toPDF(showFilters ? filteredInvoices : invoices);
   };
 
   const filteredInvoices = invoices
     .filter(tabs[selectedTab].filter)
     .filter((invoice) => {
-      // Text search filter
       const matchesSearch =
         invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         invoice.customerDetails.name
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
-
-      // Date range filter
       let matchesDateRange = true;
       if (startDate && endDate) {
         const invoiceDate = new Date(
@@ -172,8 +167,7 @@ export default function Invoices() {
     return products.reduce((sum, product) => sum + product.productPrice, 0);
   };
 
-  // Calculate total statistics
-  const totalInvoiceValue = invoices.reduce(
+  const totalInvoiceValue = (showFilters ? filteredInvoices : invoices).reduce(
     (sum, invoice) => sum + calculateTotal(invoice.products),
     0,
   );
@@ -239,6 +233,8 @@ export default function Invoices() {
 
       {/* Statistics Cards */}
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
+       
+          
         <div className="bg-white p-6 rounded-lg shadow-lg shadow-cyan-100/50 border border-cyan-100">
           <div className="flex items-center">
             <div className="p-3 rounded-full bg-cyan-100">
@@ -249,7 +245,7 @@ export default function Invoices() {
                 Total Invoices
               </p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
-                {invoices.length}
+                {showFilters ? filteredInvoices.length : invoices.length}
               </h3>
             </div>
           </div>
@@ -259,13 +255,15 @@ export default function Invoices() {
                 {tabs.map((tab, index) => (
                   <span key={tab.name} className="flex items-center">
                     {index > 0 && <span className="mx-2">•</span>}
-                    {tab.name}: {invoices.filter(tab.filter).length}
+                    {tab.name}: {(showFilters ? filteredInvoices : invoices).filter(tab.filter).length}
                   </span>
                 ))}
               </span>
             </div>
           </div>
         </div>
+      
+        
 
         <div className="bg-white p-6 rounded-lg shadow-lg shadow-cyan-100/50 border border-cyan-100">
           <div className="flex items-center">
@@ -284,12 +282,13 @@ export default function Invoices() {
           <div className="mt-4">
             <div className="flex items-center text-sm text-gray-500 font-mono">
               <span>Average per invoice: </span>
-              <span className="ml-1 font-semibold text-gray-900">
-                ₹{(totalInvoiceValue / (invoices.length || 1)).toLocaleString()}
-              </span>
+                <span className="ml-1 font-semibold text-gray-900">
+                ₹{(totalInvoiceValue / ((showFilters ? filteredInvoices.length : invoices.length) || 1)).toLocaleString()}
+                </span>
             </div>
           </div>
         </div>
+      
       </div>
 
       <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>

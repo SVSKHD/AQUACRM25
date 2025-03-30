@@ -13,12 +13,8 @@ export const exportService = {
       "Customer Phone": invoice.customerDetails.phone,
       "Customer Email": invoice.customerDetails.email,
       
-      "Base Price": invoice.gst
-        ? invoice.products.reduce((sum, p) => sum + priceUtils.getBasePrice(p.productPrice), 0)
-        : 0,
-      "GST Value": invoice.gst
-        ? invoice.products.reduce((sum, p) => sum + priceUtils.getGSTValue(p.productPrice), 0)
-        : 0,
+      "Base Price": invoice.products.reduce((sum, p) => sum + priceUtils.getBasePrice(p.productPrice), 0),
+      "GST Value":invoice.products.reduce((sum, p) => sum + priceUtils.getGSTValue(p.productPrice), 0),
       "Total Amount": invoice.products.reduce(
         (sum, p) => sum + p.productPrice,
         0,
@@ -56,12 +52,8 @@ export const exportService = {
       invoice.date,
       invoice.customerDetails.name,
      
-      invoice.gst
-        ? "Rs. " + invoice.products.reduce((sum, p) => sum + priceUtils.getBasePrice(p.productPrice), 0)
-        : "Rs. 0",
-      invoice.gst
-        ? "Rs. " + invoice.products.reduce((sum, p) => sum + priceUtils.getGSTValue(p.productPrice), 0)
-        : "Rs. 0",
+       "Rs. " + invoice.products.reduce((sum, p) => sum + priceUtils.getBasePrice(p.productPrice), 0),
+       "Rs. " + invoice.products.reduce((sum, p) => sum + priceUtils.getGSTValue(p.productPrice), 0),
         "Rs. " + invoice.products.reduce((sum, p) => sum + p.productPrice, 0),
       invoice.paidStatus,
       [
