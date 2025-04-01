@@ -33,7 +33,7 @@ interface Invoice {
   date: string;
   customerDetails: {
     name: string;
-    phone: number;
+    phone: any;
     email: string;
     address: string;
   };

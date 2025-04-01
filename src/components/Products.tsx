@@ -90,6 +90,7 @@ function ProductDialog({
         keywords: product.keywords,
         category: product.category,
       });
+      console.log("product edit", formData)
     } else {
       setFormData({
         title: "",
@@ -100,6 +101,7 @@ function ProductDialog({
         keywords: "",
         category: "",
       });
+      console.log("product create", formData)
     }
   }, [product]);
 

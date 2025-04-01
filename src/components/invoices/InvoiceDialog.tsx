@@ -13,14 +13,21 @@ interface InvoiceDialogProps {
 
 // Static product list
 const productList = [
-  { id: "1", name: "Kent Water Softener", price: 15000 },
-  { id: "2", name: "RO System", price: 25000 },
-  { id: "3", name: "UV Filter", price: 8000 },
-  { id: "4", name: "Sand Filter", price: 12000 },
-  { id: "5", name: "Filter Cartridge", price: 2000 },
-  { id: "6", name: "Installation Kit", price: 1500 },
-  { id: "7", name: "Pressure Pump", price: 5000 },
-  { id: "8", name: "Water Tank", price: 3000 },
+  { id: "1", name: "Kent Bathroom Water Softener(Manual)", price: 15000 },
+  { id: "2", name: "Kent Bathroom Water Softener(Automatic) 8L", price: 30000 },
+  { id: "3", name: "Kent Automatic Water Softener 25L", price: 70000 },
+  { id: "4", name: "Kent Automatic Water Softener 40L", price: 100000 },
+  { id: "5", name: "Kent Automatic Water Softener 100L", price: 130000 },
+  { id: "6", name: "Kent Sand-Filter", price: 25000 },
+  { id: "7", name: "Kent Iron-Filter", price: 25000 },
+  { id: "8", name: "Grundfos pressure booster Pump", price: 25000 },
+  { id: "9", name: "RO System", price: 25000 },
+  { id: "10", name: "UV Filter", price: 8000 },
+  { id: "11", name: "Sand Filter", price: 12000 },
+  { id: "12", name: "Filter Cartridge", price: 2000 },
+  { id: "13", name: "Installation Kit", price: 1500 },
+  { id: "14", name: "Pressure Pump", price: 5000 },
+  { id: "15", name: "Water Tank", price: 3000 },
 ];
 
 // Delivery status options
@@ -41,7 +48,7 @@ export default function InvoiceDialog({
       date: new Date().toLocaleDateString("en-GB"),
       customerDetails: {
         name: "",
-        phone: 0,
+        phone: "",
         email: "",
         address: "",
       },
