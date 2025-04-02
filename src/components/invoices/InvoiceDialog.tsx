@@ -103,7 +103,7 @@ export default function InvoiceDialog({
           date: new Date().toLocaleDateString("en-GB"),
           customerDetails: {
             name: "",
-            phone: 0,
+            phone: "",
             email: "",
             address: "",
           },

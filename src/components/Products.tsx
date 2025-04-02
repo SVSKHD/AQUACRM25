@@ -79,6 +79,9 @@ function ProductDialog({
     category: "",
   });
 
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+
   useEffect(() => {
     if (product) {
       setFormData({
@@ -90,7 +93,8 @@ function ProductDialog({
         keywords: product.keywords,
         category: product.category,
       });
-      console.log("product edit", formData)
+      setExistingImages(product.photos?.map((p) => p.secure_url) || []);
+      setSelectedImages([]);
     } else {
       setFormData({
         title: "",
@@ -101,15 +105,29 @@ function ProductDialog({
         keywords: "",
         category: "",
       });
-      console.log("product create", formData)
+      setExistingImages([]);
+      setSelectedImages([]);
     }
   }, [product]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Submitting form data:", formData);
+
+    // Logs
+    console.log("Form Data:", formData);
+    console.log("Existing Images:", existingImages);
+    console.log("New Images (Files):", selectedImages);
+
+    // You can now send formData, existingImages (keep), and selectedImages (to upload)
+
     onClose();
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setSelectedImages((prev) => [...prev, ...filesArray]);
+    }
   };
 
   return (
@@ -139,132 +157,42 @@ function ProductDialog({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-8 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
-                  as="h3"
-                  className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
-                >
+                <Dialog.Title className="text-2xl font-semibold leading-6 text-gray-900 mb-6">
                   {product ? "Edit Product" : "Add New Product"}
                 </Dialog.Title>
+
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
-                  {/* Current Image Preview */}
-                  {product && product.photos && product.photos[0] && (
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Current Image
-                      </label>
-                      <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
-                        <img
-                          src={product.photos[0].secure_url}
-                          alt={product.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  )}
+                  {/* Inputs */}
+                  {renderInput("Title", formData.title, (v) => setFormData({ ...formData, title: v }))}
+                  {renderInput("Brand", formData.brand, (v) => setFormData({ ...formData, brand: v }))}
+                  {renderInput("Price", formData.price.toString(), (v) => setFormData({ ...formData, price: parseFloat(v) }), "number")}
+                  {renderInput("Stock", formData.stock.toString(), (v) => setFormData({ ...formData, stock: parseInt(v) }), "number")}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Title
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.title}
-                      onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
-                      }
-                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Brand
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.brand}
-                      onChange={(e) =>
-                        setFormData({ ...formData, brand: e.target.value })
-                      }
-                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Price
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          price: parseFloat(e.target.value),
-                        })
-                      }
-                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Stock
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.stock}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          stock: parseInt(e.target.value),
-                        })
-                      }
-                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Description
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       rows={4}
-                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
+                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Keywords
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
                     <textarea
                       value={formData.keywords}
-                      onChange={(e) =>
-                        setFormData({ ...formData, keywords: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
                       rows={3}
-                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-colors duration-200 text-base"
+                      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
                       placeholder="Enter keywords, one per line"
                     />
                   </div>
 
+                  {/* Upload */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Images
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Upload Images</label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
                         <svg
@@ -284,7 +212,7 @@ function ProductDialog({
                         <div className="flex text-sm text-gray-600">
                           <label
                             htmlFor="file-upload"
-                            className="relative cursor-pointer rounded-md font-medium text-cyan-600 hover:text-cyan-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-cyan-500"
+                            className="relative cursor-pointer rounded-md font-medium text-cyan-600 hover:text-cyan-500"
                           >
                             <span>Upload files</span>
                             <input
@@ -293,28 +221,61 @@ function ProductDialog({
                               type="file"
                               className="sr-only"
                               multiple
+                              accept="image/*"
+                              onChange={handleImageChange}
                             />
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs text-gray-500">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                       </div>
                     </div>
+
+                    {/* Existing Images Preview */}
+                    {existingImages.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-600 mb-2">Existing Images</p>
+                        <div className="grid grid-cols-3 gap-4">
+                          {existingImages.map((url, i) => (
+                            <div key={i} className="w-full h-32 rounded overflow-hidden bg-gray-100">
+                              <img src={url} alt={`existing-${i}`} className="w-full h-full object-cover" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* New Images Preview */}
+                    {selectedImages.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-600 mb-2">New Uploads</p>
+                        <div className="grid grid-cols-3 gap-4">
+                          {selectedImages.map((file, i) => (
+                            <div key={i} className="w-full h-32 rounded overflow-hidden bg-gray-100">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`preview-${i}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
+                  {/* Actions */}
                   <div className="mt-8 flex justify-end space-x-3">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-cyan-500"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:ring-cyan-500"
                     >
                       {product ? "Update Product" : "Create Product"}
                     </button>
@@ -328,6 +289,26 @@ function ProductDialog({
     </Transition>
   );
 }
+
+const renderInput = (
+  label: string,
+  value: string,
+  onChange: (v: string) => void,
+  type: string = "text"
+) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+      required
+    />
+  </div>
+);
+
+
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
