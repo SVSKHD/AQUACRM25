@@ -4,6 +4,7 @@ import { useState, Fragment, useEffect } from "react";
 import { Plus, Search, Edit2, Trash2, Package } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import ProductOperations from "@/services/product";
+import { toast } from "./ui/toast";
 
 interface ProductPhoto {
   id: string;
@@ -64,10 +65,12 @@ function ProductDialog({
   isOpen,
   onClose,
   product = null,
+  reload
 }: {
   isOpen: boolean;
   onClose: () => void;
   product?: Product | null;
+  reload:()=>void;
 }) {
   const [formData, setFormData] = useState<Partial<Product>>({
     title: "",
@@ -112,14 +115,19 @@ function ProductDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Logs
-    console.log("Form Data:", formData);
-    console.log("Existing Images:", existingImages);
-    console.log("New Images (Files):", selectedImages);
-
-    // You can now send formData, existingImages (keep), and selectedImages (to upload)
-
+    if(product){
+      console.log("edit products", formData, product)
+      ProductOperations.updateProduct(product._id, formData).then(()=>{
+       toast.success("successfully edited product")
+       reload()
+      })
+      .catch(()=>{
+        toast.error("please try again to edit product")
+        reload()
+      })      
+    }else{
+      console.log("create products", formData)
+    }
     onClose();
   };
 
@@ -163,16 +171,37 @@ function ProductDialog({
 
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   {/* Inputs */}
-                  {renderInput("Title", formData.title, (v) => setFormData({ ...formData, title: v }))}
-                  {renderInput("Brand", formData.brand, (v) => setFormData({ ...formData, brand: v }))}
-                  {renderInput("Price", formData.price.toString(), (v) => setFormData({ ...formData, price: parseFloat(v) }), "number")}
-                  {renderInput("Stock", formData.stock.toString(), (v) => setFormData({ ...formData, stock: parseInt(v) }), "number")}
+                  {renderInput("Title", formData.title, (v) =>
+                    setFormData({ ...formData, title: v }),
+                  )}
+                  {renderInput("Brand", formData.brand, (v) =>
+                    setFormData({ ...formData, brand: v }),
+                  )}
+                  {renderInput(
+                    "Price",
+                    formData.price.toString(),
+                    (v) => setFormData({ ...formData, price: parseFloat(v) }),
+                    "number",
+                  )}
+                  {renderInput(
+                    "Stock",
+                    formData.stock.toString(),
+                    (v) => setFormData({ ...formData, stock: parseInt(v) }),
+                    "number",
+                  )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       rows={4}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
                       required
@@ -180,10 +209,14 @@ function ProductDialog({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Keywords</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Keywords
+                    </label>
                     <textarea
                       value={formData.keywords}
-                      onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, keywords: e.target.value })
+                      }
                       rows={3}
                       className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
                       placeholder="Enter keywords, one per line"
@@ -192,7 +225,9 @@ function ProductDialog({
 
                   {/* Upload */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Upload Images</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Upload Images
+                    </label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                       <div className="space-y-1 text-center">
                         <svg
@@ -227,18 +262,29 @@ function ProductDialog({
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
                       </div>
                     </div>
 
                     {/* Existing Images Preview */}
                     {existingImages.length > 0 && (
                       <div className="mt-4">
-                        <p className="text-sm text-gray-600 mb-2">Existing Images</p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          Existing Images
+                        </p>
                         <div className="grid grid-cols-3 gap-4">
                           {existingImages.map((url, i) => (
-                            <div key={i} className="w-full h-32 rounded overflow-hidden bg-gray-100">
-                              <img src={url} alt={`existing-${i}`} className="w-full h-full object-cover" />
+                            <div
+                              key={i}
+                              className="w-full h-32 rounded overflow-hidden bg-gray-100"
+                            >
+                              <img
+                                src={url}
+                                alt={`existing-${i}`}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                           ))}
                         </div>
@@ -248,10 +294,15 @@ function ProductDialog({
                     {/* New Images Preview */}
                     {selectedImages.length > 0 && (
                       <div className="mt-4">
-                        <p className="text-sm text-gray-600 mb-2">New Uploads</p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          New Uploads
+                        </p>
                         <div className="grid grid-cols-3 gap-4">
                           {selectedImages.map((file, i) => (
-                            <div key={i} className="w-full h-32 rounded overflow-hidden bg-gray-100">
+                            <div
+                              key={i}
+                              className="w-full h-32 rounded overflow-hidden bg-gray-100"
+                            >
                               <img
                                 src={URL.createObjectURL(file)}
                                 alt={`preview-${i}`}
@@ -294,10 +345,12 @@ const renderInput = (
   label: string,
   value: string,
   onChange: (v: string) => void,
-  type: string = "text"
+  type: string = "text",
 ) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      {label}
+    </label>
     <input
       type={type}
       value={value}
@@ -307,8 +360,6 @@ const renderInput = (
     />
   </div>
 );
-
-
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -494,6 +545,7 @@ export default function Products() {
           setIsDialogOpen(false);
           setSelectedProduct(null);
         }}
+        reload={fetchProducts}
         product={selectedProduct}
       />
     </div>

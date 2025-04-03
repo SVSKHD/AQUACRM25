@@ -146,7 +146,7 @@ export default function InvoiceDialog({
           formData,
           invoice._id,
         );
-  
+
         toast.success("Invoice updated successfully", {
           description: "The invoice has been updated.",
         });

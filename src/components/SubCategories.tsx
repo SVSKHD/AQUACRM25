@@ -24,7 +24,7 @@ interface Category {
 
 interface SubCategory {
   _id: string;
-  categoryId:any;
+  categoryId: any;
   title: string;
   description: string;
   photos: SubCategoryPhoto[];

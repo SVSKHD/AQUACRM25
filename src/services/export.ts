@@ -35,8 +35,8 @@ export const exportService = {
         ]
           .filter(Boolean)
           .join(", ") || "Regular",
-      GSTNo:invoice.gst ? invoice.gstDetails.gstNo:"none",
-      GSTName:invoice.gst?invoice.gstDetails.gstName:"none"
+      GSTNo: invoice.gst ? invoice.gstDetails.gstNo : "none",
+      GSTName: invoice.gst ? invoice.gstDetails.gstName : "none",
     }));
 
     const ws = utils.json_to_sheet(data);
@@ -79,8 +79,8 @@ export const exportService = {
       ]
         .filter(Boolean)
         .join(", ") || "Regular",
-      invoice.gst?invoice.gstDetails.gstNo:"none",
-      invoice.gst?invoice.gstDetails.gstName:"none"
+      invoice.gst ? invoice.gstDetails.gstNo : "none",
+      invoice.gst ? invoice.gstDetails.gstName : "none",
     ]);
 
     autoTable(doc, {
@@ -95,7 +95,7 @@ export const exportService = {
           "Status",
           "Type",
           "GSTNo",
-          "GstName"
+          "GstName",
         ],
       ],
       body: tableData,

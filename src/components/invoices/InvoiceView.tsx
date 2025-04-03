@@ -143,7 +143,7 @@ export default function InvoiceView() {
         `Address: ${invoice.customerDetails.address}`,
         90,
       );
-      customerAddressLines.forEach((line:any, idx:any) => {
+      customerAddressLines.forEach((line: any, idx: any) => {
         doc.text(line, 15, 70 + idx * 5);
       });
 
@@ -222,7 +222,7 @@ export default function InvoiceView() {
       termsAndConditions.forEach((term, index) => {
         doc.text(`${index + 1}. ${term.title}:`, 15, termsY);
         const splitDescription = doc.splitTextToSize(term.description, 180);
-        splitDescription.forEach((line:any) => {
+        splitDescription.forEach((line: any) => {
           doc.text(line, 20, (termsY += 5));
         });
         termsY += 7;
@@ -496,7 +496,9 @@ export default function InvoiceView() {
                       <span>GST (18%)</span>
                       <span>
                         ₹
-                        {gstValueGenerate(calculateSubtotal() ?? 0).toLocaleString()}
+                        {gstValueGenerate(
+                          calculateSubtotal() ?? 0,
+                        ).toLocaleString()}
                       </span>
                     </div>
                   )}

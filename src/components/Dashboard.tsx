@@ -297,7 +297,7 @@ export default function Dashboard() {
   }, [selectedIndex]);
 
   const userRole = (user as { role?: string })?.role || "Admin";
-  const userEmail = (user as {email?:string})?.email || 'Aquakart'
+  const userEmail = (user as { email?: string })?.email || "Aquakart";
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
       {/* Header */}
