@@ -31,6 +31,16 @@ interface Product {
   keywords?: string;
 }
 
+interface ProductForm {
+  title: string;
+  price: number;
+  description: string;
+  stock: number;
+  brand: string;
+  keywords: string;
+  category: string;
+}
+
 // Mock data for fallback
 const mockProducts = {
   status: true,
@@ -72,7 +82,7 @@ function ProductDialog({
   product?: Product | null;
   reload:()=>void;
 }) {
-  const [formData, setFormData] = useState<Partial<Product>>({
+  const [formData, setFormData] = useState<Partial<ProductForm>>({
     title: "",
     price: 0,
     description: "",
