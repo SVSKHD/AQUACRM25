@@ -75,12 +75,12 @@ function ProductDialog({
   isOpen,
   onClose,
   product = null,
-  reload
+  reload,
 }: {
   isOpen: boolean;
   onClose: () => void;
   product?: Product | null;
-  reload:()=>void;
+  reload: () => void;
 }) {
   const [formData, setFormData] = useState<Partial<ProductForm>>({
     title: "",
@@ -125,18 +125,19 @@ function ProductDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if(product){
-      console.log("edit products", formData, product)
-      ProductOperations.updateProduct(product._id, formData).then(()=>{
-       toast.success("successfully edited product")
-       reload()
-      })
-      .catch(()=>{
-        toast.error("please try again to edit product")
-        reload()
-      })      
-    }else{
-      console.log("create products", formData)
+    if (product) {
+      console.log("edit products", formData, product);
+      ProductOperations.updateProduct(product._id, formData)
+        .then(() => {
+          toast.success("successfully edited product");
+          reload();
+        })
+        .catch(() => {
+          toast.error("please try again to edit product");
+          reload();
+        });
+    } else {
+      console.log("create products", formData);
     }
     onClose();
   };
@@ -181,21 +182,24 @@ function ProductDialog({
 
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   {/* Inputs */}
-                  {renderInput("Title", formData.title, (v) =>
+                  {renderInput("Title", formData.title ?? "", (v) =>
                     setFormData({ ...formData, title: v }),
                   )}
-                  {renderInput("Brand", formData.brand, (v) =>
+
+                  {renderInput("Brand", formData.brand ?? "", (v) =>
                     setFormData({ ...formData, brand: v }),
                   )}
+
                   {renderInput(
                     "Price",
-                    formData.price.toString(),
+                    (formData.price ?? 0).toString(),
                     (v) => setFormData({ ...formData, price: parseFloat(v) }),
                     "number",
                   )}
+
                   {renderInput(
                     "Stock",
-                    formData.stock.toString(),
+                    (formData.stock ?? 0).toString(),
                     (v) => setFormData({ ...formData, stock: parseInt(v) }),
                     "number",
                   )}
