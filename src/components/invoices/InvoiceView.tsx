@@ -492,14 +492,17 @@ export default function InvoiceView() {
                     </span>
                   </div>
                   {!invoice?.gst && (
- <div className="flex justify-between text-gray-600">
- <span>Gst</span>
- <span>
-   ₹{gstValueGenerate(calculateSubtotal() ?? 0).toLocaleString()}
- </span>
-</div>
+                    <div className="flex justify-between text-gray-600">
+                      <span>Gst</span>
+                      <span>
+                        ₹
+                        {gstValueGenerate(
+                          calculateSubtotal() ?? 0,
+                        ).toLocaleString()}
+                      </span>
+                    </div>
                   )}
-                 
+
                   {invoice.gst && (
                     <div className="flex justify-between text-gray-600">
                       <span>GST (18%)</span>
