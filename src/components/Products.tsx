@@ -129,7 +129,7 @@ function ProductDialog({
       console.log("edit products", formData, product);
       ProductOperations.updateProduct(product._id, formData)
         .then(() => {
-          toast.success("successfully edited product");
+          toast.success("successfully updated product");
           reload();
         })
         .catch(() => {
