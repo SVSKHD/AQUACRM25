@@ -2,7 +2,7 @@
 
 import { useState, Fragment, useEffect } from "react";
 import { Plus, Search, Edit2, Trash2, Package } from "lucide-react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Switch } from "@headlessui/react";
 import ProductOperations from "@/services/product";
 import { toast } from "./ui/toast";
 
@@ -17,6 +17,7 @@ interface Product {
   title: string;
   slug: string;
   discountPriceStatus: boolean;
+  discountPrice: number | null;
   price: number;
   description: string;
   photos: ProductPhoto[];
@@ -33,12 +34,14 @@ interface Product {
 
 interface ProductForm {
   title: string;
-  price: number;
+  price: any;
   description: string;
-  stock: number;
+  stock: any;
   brand: string;
   keywords: string;
   category: string;
+  discountPriceStatus: boolean;
+  discountPrice: any;
 }
 
 // Mock data for fallback
@@ -90,6 +93,8 @@ function ProductDialog({
     brand: "",
     keywords: "",
     category: "",
+    discountPriceStatus: false,
+    discountPrice: 0,
   });
 
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -105,18 +110,22 @@ function ProductDialog({
         brand: product.brand,
         keywords: product.keywords,
         category: product.category,
+        discountPriceStatus: product.discountPriceStatus ?? false,
+        discountPrice: product.discountPrice ?? 0,
       });
       setExistingImages(product.photos?.map((p) => p.secure_url) || []);
       setSelectedImages([]);
     } else {
       setFormData({
         title: "",
-        price: 0,
+        price: "",
         description: "",
-        stock: 0,
+        stock: "",
         brand: "",
         keywords: "",
         category: "",
+        discountPriceStatus: false,
+        discountPrice: "",
       });
       setExistingImages([]);
       setSelectedImages([]);
@@ -221,6 +230,50 @@ function ProductDialog({
                       required
                     />
                   </div>
+
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Enable Discount
+                    </label>
+                    <Switch
+                      checked={formData.discountPriceStatus}
+                      onChange={(value) =>
+                        setFormData({ ...formData, discountPriceStatus: value })
+                      }
+                      className={`${
+                        formData.discountPriceStatus
+                          ? "bg-cyan-600"
+                          : "bg-gray-300"
+                      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+                    >
+                      <span
+                        className={`${
+                          formData.discountPriceStatus
+                            ? "translate-x-6"
+                            : "translate-x-1"
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                      />
+                    </Switch>
+                  </div>
+
+                  {formData.discountPriceStatus && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Discount Price
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.discountPrice ?? ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            discountPrice: parseFloat(e.target.value),
+                          })
+                        }
+                        className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+                      />
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -518,9 +571,20 @@ export default function Products() {
             </div>
             <div className="mt-4">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold text-gray-900">
-                  ₹{product.price.toLocaleString()}
-                </span>
+              {product.discountPriceStatus ? (
+    <>
+      <span className="text-sm font-medium text-gray-500 line-through">
+        ₹{product.price.toLocaleString()}
+      </span>
+      <span className="text-lg font-semibold text-green-600">
+        ₹{product.discountPrice.toLocaleString()}
+      </span>
+    </>
+  ) : (
+    <span className="text-lg font-semibold text-gray-900">
+      ₹{product.price.toLocaleString()}
+    </span>
+  )}
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     product.stock > 0
