@@ -17,7 +17,7 @@ interface Product {
   title: string;
   slug: string;
   discountPriceStatus: boolean;
-  discountPrice: number | null;
+  discountPrice: number;
   price: number;
   description: string;
   photos: ProductPhoto[];
