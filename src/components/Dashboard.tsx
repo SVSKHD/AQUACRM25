@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Tab } from '@headlessui/react';
 import { LayoutDashboard, Package, FolderTree, FileText, UserCircle, GitFork, LogOut, Ticket, BookOpen, Link, Bell, Tag, ChevronLeft, ChevronRight, Mail, Shield, IndianRupee, Users as UsersIcon, ShoppingBag, TrendingUp, ArrowUpRight, ArrowDownRight, Activity, ShoppingCart } from 'lucide-react';
@@ -299,7 +300,7 @@ export default function Dashboard() {
   const userRole = user?.role || 'Admin';
 
   // Find the notifications tab index
-  const notificationsTabIndex = tabs.findIndex(tab => tab.name === 'Notifications');
+  const notificationsTabIndex = tabs?.findIndex(tab => tab.name === 'Notifications');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
@@ -316,14 +317,14 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               {/* Notifications Button */}
-              {tabs[notificationsTabIndex].notificationCount > 0 && (
+              {tabs[notificationsTabIndex] && tabs[notificationsTabIndex]!.notificationCount && tabs[notificationsTabIndex]!.notificationCount > 0 && (
                 <button
                   onClick={() => setSelectedIndex(notificationsTabIndex)}
                   className="relative p-2 text-gray-400 hover:text-cyan-600 transition-colors duration-200"
                 >
                   <Bell className="h-6 w-6" />
                   <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
-                    {tabs[notificationsTabIndex].notificationCount}
+                    {tabs[notificationsTabIndex]?.notificationCount}
                   </span>
                 </button>
               )}
@@ -412,9 +413,9 @@ export default function Dashboard() {
                     }
                   >
                     <div className="flex items-center justify-center space-x-2">
-                      <tab.icon className="h-5 w-5" />
+                      {React.createElement(tab.icon, { className: "h-5 w-5" })}
                       <span>{tab.name}</span>
-                      {tab.notificationCount > 0 && (
+                      {typeof tab.notificationCount === 'number' && tab.notificationCount > 0 && (
                         <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
                           {tab.notificationCount}
                         </span>
@@ -460,7 +461,7 @@ export default function Dashboard() {
                   'animate-fadeIn'
                 )}
               >
-                <tab.component />
+                {React.createElement(tab.component)}
               </Tab.Panel>
             ))}
           </Tab.Panels>

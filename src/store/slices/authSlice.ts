@@ -4,6 +4,7 @@ import { authService } from "../../services/api";
 interface User {
   id: string;
   email: string;
+  role?: string;
   token?: string;
 }
 
