@@ -20,8 +20,9 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(signIn({ email, password })).unwrap();
-      onClose();
+      const response = await dispatch(signIn({ email, password })).unwrap();
+      console.log("Sign in successful:", response);
+      // onClose();
     } catch (error) {
       console.error("Auth error:", error);
     }

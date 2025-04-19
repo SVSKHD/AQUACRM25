@@ -39,11 +39,17 @@ export const signIn = createAsyncThunk(
 );
 
 export const checkAuth = createAsyncThunk("auth/checkAuth", async () => {
-  const session = await authService.getSession();
-  if (!session) return null;
+  const userString = localStorage.getItem("user");
+  if (!userString) return null;
+
+  const user = JSON.parse(userString);
+  
+  // ✅ return the expected shape
   return {
-    id: session.user._id,
-    email: session.user.email,
+    id: user.id || user._id,
+    email: user.email,
+    role: user.role == 1 ? "admin" : "user",
+    token: user.token,
   };
 });
 

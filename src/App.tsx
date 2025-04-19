@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { checkAuth } from "./store/slices/authSlice";
@@ -9,9 +9,17 @@ import InvoiceView from "./components/invoices/InvoiceView";
 function App() {
   const dispatch = useAppDispatch();
   const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = React.useState(false);
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // Check for auth token
+    const token = localStorage.getItem("token");
+    if (token){
+      console.log("hello")
+    }
+    if (!token) {
+      setIsAuthDialogOpen(true); // show auth dialog if not logged in
+    }
     dispatch(checkAuth());
   }, [dispatch]);
 
@@ -87,7 +95,7 @@ function App() {
                     Sign In to Access Dashboard
                   </button>
                 </div>
-
+{JSON.stringify(isAuthenticated)}
                 <AuthDialog
                   isOpen={isAuthDialogOpen}
                   onClose={() => setIsAuthDialogOpen(false)}

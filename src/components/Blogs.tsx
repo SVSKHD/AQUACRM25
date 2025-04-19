@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, Fragment } from "react";
-import { Plus, Search, Edit2, Trash2, BookOpen } from "lucide-react";
+import { useState, Fragment, useEffect } from "react";
+import { Plus, Search, Edit2, Trash2, BookOpen, Sparkles } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import axios from "axios";
+import BlogOperations from "@/services/blog";
+import { toast } from "./ui/toast";
 
 interface Blog {
   _id: string;
@@ -12,8 +15,10 @@ interface Blog {
   excerpt: string;
   category: string;
   tags: string[];
+  keywords?: string[];
   author: string;
   status: "draft" | "published";
+  titleImages?: { secure_url: string }[];
   featuredImage?: string;
   publishDate: string;
   readTime: number;
@@ -64,6 +69,8 @@ function BlogDialog({
   onClose: () => void;
   blog?: Blog | null;
 }) {
+
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<Blog>>(
     blog || {
       title: "",
@@ -77,10 +84,73 @@ function BlogDialog({
     },
   );
 
+  useEffect(() => {
+    if (blog) {
+      setFormData(blog);
+    } else {
+      setFormData({
+        title: "",
+        content: "",
+        excerpt: "",
+        category: "",
+        tags: [],
+        author: "",
+        status: "draft",
+        readTime: 0,
+      });
+    }
+  }, [blog]);
+
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitting blog:", formData);
     onClose();
+  };
+
+  const generateWithAI = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            inputs: `Write a blog post with the following sections:\nTitle:\nExcerpt:\nContent:\nCategory:\nTags (comma-separated):\nAuthor:\nEstimated Read Time:\nTopic: ${
+              formData.title || "Water Purification"
+            }`,
+          }),
+        }
+      );
+  
+      const result = await response.json();
+      const text = result?.[0]?.generated_text || result?.generated_text || "";
+  
+      // Extract fields using simple regex-based parsing
+      const extract = (label) =>
+        text.split(label)[1]?.split("\n")[0]?.trim() || "";
+  
+      setFormData({
+        title: extract("Title:"),
+        excerpt: extract("Excerpt:"),
+        content: text.split("Content:")[1]?.split("Category:")[0]?.trim() || "",
+        category: extract("Category:"),
+        tags: extract("Tags:").split(",").map((t) => t.trim()),
+        author: extract("Author:"),
+        readTime:
+          parseInt(extract("Estimated Read Time:").replace(/\D/g, "")) || 3,
+        status: "draft",
+      });
+    } catch (err) {
+      console.error("AI generation error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -114,7 +184,16 @@ function BlogDialog({
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {blog ? "Edit Blog Post" : "Create New Blog Post"}
+                  {blog ? "Edit Blog Post" : "Create New Blog Post"}  
+                  <button
+                    type="button"
+                    onClick={generateWithAI}
+                    className="flex items-center px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded hover:from-indigo-600 hover:to-purple-600"
+                    disabled={isLoading}
+                  >
+                    <Sparkles className="h-4 w-4 mr-1" />
+                    {isLoading ? "Generating..." : "Generate with AI"}
+                  </button>
                 </Dialog.Title>
                 <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                   <div>
@@ -310,6 +389,20 @@ export default function Blogs() {
       blog.content.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  useEffect(() => {
+    fetchBlogs();
+  },[])
+
+  const fetchBlogs = async()=>{
+    try {
+      BlogOperations.getBlogs().then((res)=>{
+        setBlogs(res.data.data);
+      })
+    } catch (error) {
+      toast.error("Failed to fetch blogs");
+    }
+  }
+
   const handleEdit = (blog: Blog) => {
     setSelectedBlog(blog);
     setIsDialogOpen(true);
@@ -357,14 +450,14 @@ export default function Blogs() {
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredBlogs.map((blog) => (
           <div
-            key={blog._id}
+            key={blog?._id}
             className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
           >
-            {blog.featuredImage && (
+            {blog?.titleImages && (
               <div className="aspect-video w-full mb-4 rounded-lg overflow-hidden">
                 <img
-                  src={blog.featuredImage}
-                  alt={blog.title}
+                  src={blog?.titleImages[0]?.secure_url}
+                  alt={blog?.title}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -372,9 +465,9 @@ export default function Blogs() {
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-medium text-gray-900">
-                  {blog.title}
+                  {blog?.title}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">{blog.excerpt}</p>
+                <p className="mt-1 text-sm text-gray-500">{blog?.excerpt}</p>
               </div>
               <div className="flex space-x-2">
                 <button
@@ -391,19 +484,19 @@ export default function Blogs() {
             <div className="mt-4">
               <div className="flex items-center text-sm text-gray-500">
                 <BookOpen className="h-4 w-4 mr-1" />
-                {blog.readTime} min read
+                {blog?.readTime} min read
                 <span className="mx-2">•</span>
-                <span>{blog.author}</span>
+                <span>{blog?.author}</span>
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
-                {blog.tags.map((tag, index) => (
+                {/* {blog?.keywords?.map((tag, index) => (
                   <span
                     key={index}
                     className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700"
                   >
                     {tag}
                   </span>
-                ))}
+                ))} */}
               </div>
               <div className="mt-2">
                 <span
@@ -413,7 +506,7 @@ export default function Blogs() {
                       : "bg-amber-100 text-amber-800"
                   }`}
                 >
-                  {blog.status.charAt(0).toUpperCase() + blog.status.slice(1)}
+                  {blog?.status?.charAt(0)?.toUpperCase() + blog?.status?.slice(1)}
                 </span>
               </div>
             </div>

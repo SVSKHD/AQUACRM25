@@ -52,6 +52,7 @@ const analyticsData = {
 };
 
 function DashboardAnalytics() {
+  
   const getOrderStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
@@ -244,6 +245,17 @@ export default function Dashboard() {
   const handleSignOut = () => {
     dispatch(signOut());
   };
+
+  useEffect(() => {
+    const savedTab = localStorage.getItem("selectedTab");
+    if (savedTab) {
+      setSelectedIndex(parseInt(savedTab));
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem("selectedTab", selectedIndex.toString());
+  }, [selectedIndex]);
 
   const scrollTabs = (direction: 'left' | 'right') => {
     if (tabsRef.current) {
