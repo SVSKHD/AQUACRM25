@@ -132,7 +132,7 @@ function BlogDialog({
       const text = result?.[0]?.generated_text || result?.generated_text || "";
   
       // Extract fields using simple regex-based parsing
-      const extract = (label) =>
+      const extract = (label:any) =>
         text.split(label)[1]?.split("\n")[0]?.trim() || "";
   
       setFormData({
@@ -140,7 +140,7 @@ function BlogDialog({
         excerpt: extract("Excerpt:"),
         content: text.split("Content:")[1]?.split("Category:")[0]?.trim() || "",
         category: extract("Category:"),
-        tags: extract("Tags:").split(",").map((t) => t.trim()),
+        tags: extract("Tags:").split(",").map((t:string) => t.trim()),
         author: extract("Author:"),
         readTime:
           parseInt(extract("Estimated Read Time:").replace(/\D/g, "")) || 3,
