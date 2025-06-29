@@ -1,5 +1,5 @@
-import { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 
 interface TimeoutWarningDialogProps {
   showTimeoutWarning: boolean;
@@ -12,7 +12,7 @@ export function TimeoutWarningDialog({
   showTimeoutWarning,
   timeLeft,
   onStaySignedIn,
-  onSignOut
+  onSignOut,
 }: TimeoutWarningDialogProps) {
   return (
     <Transition appear show={showTimeoutWarning} as={Fragment}>
@@ -49,7 +49,8 @@ export function TimeoutWarningDialog({
                 </Dialog.Title>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Your session will expire in <strong>{timeLeft}</strong> seconds due to inactivity. Would you like to stay signed in?
+                    Your session will expire in <strong>{timeLeft}</strong>{" "}
+                    seconds due to inactivity. Would you like to stay signed in?
                   </p>
                 </div>
 

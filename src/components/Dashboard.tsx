@@ -1,24 +1,49 @@
-import React from 'react';
-import { useState, useRef, useEffect } from 'react';
-import { Tab } from '@headlessui/react';
-import { LayoutDashboard, Package, FolderTree, FileText, UserCircle, GitFork, LogOut, Ticket, BookOpen, Link, Bell, Tag, ChevronLeft, ChevronRight, Mail, Shield, IndianRupee, Users as UsersIcon, ShoppingBag, TrendingUp, ArrowUpRight, ArrowDownRight, Activity, ShoppingCart } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { signOut } from '../store/slices/authSlice';
-import { useOrderNotifications } from '@/hooks/useOrderNotifications';
-import Products from './Products';
-import Categories from './Categories';
-import InvoiceView from './Invoices';
-import Users from './Users';
-import SubCategories from './SubCategories';
-import Orders from './orders';
-import Coupons from './Coupons';
-import Blogs from './Blogs';
-import PaymentLinks from './PaymentLinks';
-import Notifications from './Notifications';
-import Offers from './Offers';
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import { Tab } from "@headlessui/react";
+import {
+  LayoutDashboard,
+  Package,
+  FolderTree,
+  FileText,
+  UserCircle,
+  GitFork,
+  LogOut,
+  Ticket,
+  BookOpen,
+  Link,
+  Bell,
+  Tag,
+  ChevronLeft,
+  ChevronRight,
+  Mail,
+  Shield,
+  IndianRupee,
+  Users as UsersIcon,
+  ShoppingBag,
+  TrendingUp,
+  ArrowUpRight,
+  ArrowDownRight,
+  Activity,
+  ShoppingCart,
+} from "lucide-react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { signOut } from "../store/slices/authSlice";
+import { useOrderNotifications } from "@/hooks/useOrderNotifications";
+import Products from "./Products";
+import Categories from "./Categories";
+import InvoiceView from "./Invoices";
+import Users from "./Users";
+import SubCategories from "./SubCategories";
+import Orders from "./orders";
+import Coupons from "./Coupons";
+import Blogs from "./Blogs";
+import PaymentLinks from "./PaymentLinks";
+import Notifications from "./Notifications";
+import Offers from "./Offers";
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 interface TabItem {
@@ -35,36 +60,53 @@ const analyticsData = {
   averageOrderValue: 8012,
   totalCustomers: 89,
   recentStats: {
-    revenue: { value: 125000, trend: 'up', percentage: 12.5 },
-    orders: { value: 24, trend: 'up', percentage: 8.3 },
-    customers: { value: 15, trend: 'down', percentage: 3.2 }
+    revenue: { value: 125000, trend: "up", percentage: 12.5 },
+    orders: { value: 24, trend: "up", percentage: 8.3 },
+    customers: { value: 15, trend: "down", percentage: 3.2 },
   },
   topProducts: [
-    { name: 'Kent Water Softener', sales: 28, revenue: 420000 },
-    { name: 'RO Purifier System', sales: 22, revenue: 330000 },
-    { name: 'UV Filter', sales: 18, revenue: 180000 }
+    { name: "Kent Water Softener", sales: 28, revenue: 420000 },
+    { name: "RO Purifier System", sales: 22, revenue: 330000 },
+    { name: "UV Filter", sales: 18, revenue: 180000 },
   ],
   recentOrders: [
-    { id: '1', number: 'ORD-2025-001', customer: 'John Doe', status: 'processing', total: 16500 },
-    { id: '2', number: 'ORD-2025-002', customer: 'Jane Smith', status: 'shipped', total: 25000 },
-    { id: '3', number: 'ORD-2025-003', customer: 'Mike Johnson', status: 'pending', total: 4000 }
-  ]
+    {
+      id: "1",
+      number: "ORD-2025-001",
+      customer: "John Doe",
+      status: "processing",
+      total: 16500,
+    },
+    {
+      id: "2",
+      number: "ORD-2025-002",
+      customer: "Jane Smith",
+      status: "shipped",
+      total: 25000,
+    },
+    {
+      id: "3",
+      number: "ORD-2025-003",
+      customer: "Mike Johnson",
+      status: "pending",
+      total: 4000,
+    },
+  ],
 };
 
 function DashboardAnalytics() {
-  
   const getOrderStatusColor = (status: string) => {
     switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'processing':
-        return 'bg-blue-100 text-blue-800';
-      case 'shipped':
-        return 'bg-purple-100 text-purple-800';
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "processing":
+        return "bg-blue-100 text-blue-800";
+      case "shipped":
+        return "bg-purple-100 text-purple-800";
+      case "delivered":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -78,15 +120,19 @@ function DashboardAnalytics() {
               <IndianRupee className="h-6 w-6 text-cyan-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">Total Revenue</p>
+              <p className="text-sm font-medium text-gray-500 font-mono">
+                Total Revenue
+              </p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
                 ₹{analyticsData.totalRevenue.toLocaleString()}
               </h3>
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm font-mono">
-            <span className={`flex items-center ${analyticsData.recentStats.revenue.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {analyticsData.recentStats.revenue.trend === 'up' ? (
+            <span
+              className={`flex items-center ${analyticsData.recentStats.revenue.trend === "up" ? "text-green-600" : "text-red-600"}`}
+            >
+              {analyticsData.recentStats.revenue.trend === "up" ? (
                 <ArrowUpRight className="h-4 w-4 mr-1" />
               ) : (
                 <ArrowDownRight className="h-4 w-4 mr-1" />
@@ -103,15 +149,19 @@ function DashboardAnalytics() {
               <ShoppingBag className="h-6 w-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">Total Orders</p>
+              <p className="text-sm font-medium text-gray-500 font-mono">
+                Total Orders
+              </p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
                 {analyticsData.totalOrders}
               </h3>
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm font-mono">
-            <span className={`flex items-center ${analyticsData.recentStats.orders.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {analyticsData.recentStats.orders.trend === 'up' ? (
+            <span
+              className={`flex items-center ${analyticsData.recentStats.orders.trend === "up" ? "text-green-600" : "text-red-600"}`}
+            >
+              {analyticsData.recentStats.orders.trend === "up" ? (
                 <ArrowUpRight className="h-4 w-4 mr-1" />
               ) : (
                 <ArrowDownRight className="h-4 w-4 mr-1" />
@@ -128,7 +178,9 @@ function DashboardAnalytics() {
               <TrendingUp className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">Average Order Value</p>
+              <p className="text-sm font-medium text-gray-500 font-mono">
+                Average Order Value
+              </p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
                 ₹{analyticsData.averageOrderValue.toLocaleString()}
               </h3>
@@ -146,15 +198,19 @@ function DashboardAnalytics() {
               <UsersIcon className="h-6 w-6 text-green-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500 font-mono">Total Customers</p>
+              <p className="text-sm font-medium text-gray-500 font-mono">
+                Total Customers
+              </p>
               <h3 className="text-2xl font-bold text-gray-900 font-mono mt-1">
                 {analyticsData.totalCustomers}
               </h3>
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm font-mono">
-            <span className={`flex items-center ${analyticsData.recentStats.customers.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {analyticsData.recentStats.customers.trend === 'up' ? (
+            <span
+              className={`flex items-center ${analyticsData.recentStats.customers.trend === "up" ? "text-green-600" : "text-red-600"}`}
+            >
+              {analyticsData.recentStats.customers.trend === "up" ? (
                 <ArrowUpRight className="h-4 w-4 mr-1" />
               ) : (
                 <ArrowDownRight className="h-4 w-4 mr-1" />
@@ -169,19 +225,27 @@ function DashboardAnalytics() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Top Products */}
         <div className="bg-white rounded-lg shadow-lg shadow-cyan-100/50 border border-cyan-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 font-mono mb-4">Top Performing Products</h3>
+          <h3 className="text-lg font-semibold text-gray-900 font-mono mb-4">
+            Top Performing Products
+          </h3>
           <div className="space-y-4">
             {analyticsData.topProducts.map((product, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <span className="w-8 text-sm font-mono text-gray-500">#{index + 1}</span>
+                  <span className="w-8 text-sm font-mono text-gray-500">
+                    #{index + 1}
+                  </span>
                   <div>
                     <p className="font-mono text-gray-900">{product.name}</p>
-                    <p className="text-sm font-mono text-gray-500">{product.sales} sales</p>
+                    <p className="text-sm font-mono text-gray-500">
+                      {product.sales} sales
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-mono text-gray-900">₹{product.revenue.toLocaleString()}</p>
+                  <p className="font-mono text-gray-900">
+                    ₹{product.revenue.toLocaleString()}
+                  </p>
                   <p className="text-sm font-mono text-gray-500">Revenue</p>
                 </div>
               </div>
@@ -191,7 +255,9 @@ function DashboardAnalytics() {
 
         {/* Recent Orders */}
         <div className="bg-white rounded-lg shadow-lg shadow-cyan-100/50 border border-cyan-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 font-mono mb-4">Recent Orders</h3>
+          <h3 className="text-lg font-semibold text-gray-900 font-mono mb-4">
+            Recent Orders
+          </h3>
           <div className="space-y-4">
             {analyticsData.recentOrders.map((order) => (
               <div key={order.id} className="flex items-center justify-between">
@@ -199,14 +265,21 @@ function DashboardAnalytics() {
                   <ShoppingCart className="h-5 w-5 text-gray-400 mr-3" />
                   <div>
                     <p className="font-mono text-gray-900">{order.number}</p>
-                    <p className="text-sm font-mono text-gray-500">{order.customer}</p>
+                    <p className="text-sm font-mono text-gray-500">
+                      {order.customer}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right flex items-center space-x-4">
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getOrderStatusColor(order.status)}`}>
-                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getOrderStatusColor(order.status)}`}
+                  >
+                    {order.status.charAt(0).toUpperCase() +
+                      order.status.slice(1)}
                   </span>
-                  <span className="font-mono text-gray-900">₹{order.total.toLocaleString()}</span>
+                  <span className="font-mono text-gray-900">
+                    ₹{order.total.toLocaleString()}
+                  </span>
                 </div>
               </div>
             ))}
@@ -219,27 +292,34 @@ function DashboardAnalytics() {
 
 export default function Dashboard() {
   useOrderNotifications();
-  
+
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector(state => state.auth);
-  const { unreadCount, items: notifications } = useAppSelector(state => state.notifications);
+  const { user } = useAppSelector((state) => state.auth);
+  const { unreadCount, items: notifications } = useAppSelector(
+    (state) => state.notifications,
+  );
   const [selectedIndex, setSelectedIndex] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
   const tabs: TabItem[] = [
-    { name: 'Products', icon: Package, component: Products },
-    { name: 'Categories', icon: FolderTree, component: Categories },
-    { name: 'Subcategories', icon: GitFork, component: SubCategories },
-    { name: 'Orders', icon: ShoppingCart, component: Orders },
-    { name: 'Coupons', icon: Ticket, component: Coupons },
-    { name: 'Invoices', icon: FileText, component: InvoiceView },
-    { name: 'Payment Links', icon: Link, component: PaymentLinks },
-    { name: 'Blogs', icon: BookOpen, component: Blogs },
-    { name: 'Notifications', icon: Bell, component: Notifications, notificationCount: unreadCount },
-    { name: 'Offers', icon: Tag, component: Offers },
-    { name: 'Users', icon: UserCircle, component: Users }
+    { name: "Products", icon: Package, component: Products },
+    { name: "Categories", icon: FolderTree, component: Categories },
+    { name: "Subcategories", icon: GitFork, component: SubCategories },
+    { name: "Orders", icon: ShoppingCart, component: Orders },
+    { name: "Coupons", icon: Ticket, component: Coupons },
+    { name: "Invoices", icon: FileText, component: InvoiceView },
+    { name: "Payment Links", icon: Link, component: PaymentLinks },
+    { name: "Blogs", icon: BookOpen, component: Blogs },
+    {
+      name: "Notifications",
+      icon: Bell,
+      component: Notifications,
+      notificationCount: unreadCount,
+    },
+    { name: "Offers", icon: Tag, component: Offers },
+    { name: "Users", icon: UserCircle, component: Users },
   ];
 
   const handleSignOut = () => {
@@ -252,18 +332,21 @@ export default function Dashboard() {
       setSelectedIndex(parseInt(savedTab));
     }
   }, []);
-  
+
   useEffect(() => {
     localStorage.setItem("selectedTab", selectedIndex.toString());
   }, [selectedIndex]);
 
-  const scrollTabs = (direction: 'left' | 'right') => {
+  const scrollTabs = (direction: "left" | "right") => {
     if (tabsRef.current) {
       const scrollAmount = 200;
       const currentScroll = tabsRef.current.scrollLeft;
       tabsRef.current.scrollTo({
-        left: direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount,
-        behavior: 'smooth'
+        left:
+          direction === "left"
+            ? currentScroll - scrollAmount
+            : currentScroll + scrollAmount,
+        behavior: "smooth",
       });
     }
   };
@@ -272,8 +355,8 @@ export default function Dashboard() {
     if (tabsRef.current) {
       setShowLeftArrow(tabsRef.current.scrollLeft > 0);
       setShowRightArrow(
-        tabsRef.current.scrollLeft < 
-        tabsRef.current.scrollWidth - tabsRef.current.clientWidth - 5
+        tabsRef.current.scrollLeft <
+          tabsRef.current.scrollWidth - tabsRef.current.clientWidth - 5,
       );
     }
   };
@@ -282,15 +365,15 @@ export default function Dashboard() {
     const tabsElement = tabsRef.current;
     if (tabsElement) {
       checkScrollButtons();
-      tabsElement.addEventListener('scroll', checkScrollButtons);
-      window.addEventListener('resize', checkScrollButtons);
+      tabsElement.addEventListener("scroll", checkScrollButtons);
+      window.addEventListener("resize", checkScrollButtons);
     }
 
     return () => {
       if (tabsElement) {
-        tabsElement.removeEventListener('scroll', checkScrollButtons);
+        tabsElement.removeEventListener("scroll", checkScrollButtons);
       }
-      window.removeEventListener('resize', checkScrollButtons);
+      window.removeEventListener("resize", checkScrollButtons);
     };
   }, []);
 
@@ -301,18 +384,24 @@ export default function Dashboard() {
         const tabElement = tabElements[selectedIndex] as HTMLElement;
         const tabsRect = tabsRef.current.getBoundingClientRect();
         const tabRect = tabElement.getBoundingClientRect();
-        
+
         if (tabRect.left < tabsRect.left || tabRect.right > tabsRect.right) {
-          tabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          tabElement.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center",
+          });
         }
       }
     }
   }, [selectedIndex]);
 
-  const userRole = user?.role || 'Admin';
+  const userRole = user?.role || "Admin";
 
   // Find the notifications tab index
-  const notificationsTabIndex = tabs?.findIndex(tab => tab.name === 'Notifications');
+  const notificationsTabIndex = tabs?.findIndex(
+    (tab) => tab.name === "Notifications",
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
@@ -323,23 +412,29 @@ export default function Dashboard() {
             <div className="flex items-center space-x-3">
               <LayoutDashboard className="h-8 w-8 text-cyan-600" />
               <div>
-                <h1 className="text-xl font-bold text-cyan-900 font-mono">Aquakart</h1>
-                <p className="text-xs text-cyan-600 font-mono">Business Management Suite</p>
+                <h1 className="text-xl font-bold text-cyan-900 font-mono">
+                  Aquakart
+                </h1>
+                <p className="text-xs text-cyan-600 font-mono">
+                  Business Management Suite
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               {/* Notifications Button */}
-              {tabs[notificationsTabIndex] && tabs[notificationsTabIndex]!.notificationCount && tabs[notificationsTabIndex]!.notificationCount > 0 && (
-                <button
-                  onClick={() => setSelectedIndex(notificationsTabIndex)}
-                  className="relative p-2 text-gray-400 hover:text-cyan-600 transition-colors duration-200"
-                >
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
-                    {tabs[notificationsTabIndex]?.notificationCount}
-                  </span>
-                </button>
-              )}
+              {tabs[notificationsTabIndex] &&
+                tabs[notificationsTabIndex]!.notificationCount &&
+                tabs[notificationsTabIndex]!.notificationCount > 0 && (
+                  <button
+                    onClick={() => setSelectedIndex(notificationsTabIndex)}
+                    className="relative p-2 text-gray-400 hover:text-cyan-600 transition-colors duration-200"
+                  >
+                    <Bell className="h-6 w-6" />
+                    <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
+                      {tabs[notificationsTabIndex]?.notificationCount}
+                    </span>
+                  </button>
+                )}
               <div className="bg-cyan-50 rounded-lg px-4 py-2 flex items-center">
                 <div className="mr-3">
                   <div className="h-10 w-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center">
@@ -349,7 +444,9 @@ export default function Dashboard() {
                 <div>
                   <div className="flex items-center">
                     <Mail className="h-4 w-4 text-cyan-600 mr-1.5" />
-                    <span className="font-mono font-medium text-gray-800">{user?.email}</span>
+                    <span className="font-mono font-medium text-gray-800">
+                      {user?.email}
+                    </span>
                   </div>
                   <div className="flex items-center mt-0.5">
                     <Shield className="h-3.5 w-3.5 text-cyan-600 mr-1.5" />
@@ -379,29 +476,29 @@ export default function Dashboard() {
         <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
           <div className="relative">
             {showLeftArrow && (
-              <button 
-                onClick={() => scrollTabs('left')}
+              <button
+                onClick={() => scrollTabs("left")}
                 className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-1 text-cyan-600 hover:text-cyan-800 focus:outline-none"
                 aria-label="Scroll tabs left"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
             )}
-            
-            <div 
+
+            <div
               ref={tabsRef}
               className="overflow-x-auto scrollbar-hide mx-8 rounded-xl bg-white p-1.5 shadow-lg shadow-cyan-100/50"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               <Tab.List className="flex space-x-2 min-w-max">
                 <Tab
                   className={({ selected }) =>
                     classNames(
-                      'rounded-lg py-3 px-4 text-sm font-mono font-medium leading-5 transition-all duration-200 ease-out whitespace-nowrap',
-                      'ring-white/60 ring-offset-2 ring-offset-cyan-400 focus:outline-none focus:ring-2',
+                      "rounded-lg py-3 px-4 text-sm font-mono font-medium leading-5 transition-all duration-200 ease-out whitespace-nowrap",
+                      "ring-white/60 ring-offset-2 ring-offset-cyan-400 focus:outline-none focus:ring-2",
                       selected
-                        ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md'
-                        : 'text-cyan-700 hover:bg-cyan-50 hover:text-cyan-900'
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md"
+                        : "text-cyan-700 hover:bg-cyan-50 hover:text-cyan-900",
                     )
                   }
                   onClick={() => setSelectedIndex(-1)}
@@ -416,31 +513,32 @@ export default function Dashboard() {
                     key={tab.name}
                     className={({ selected }) =>
                       classNames(
-                        'rounded-lg py-3 px-4 text-sm font-mono font-medium leading-5 transition-all duration-200 ease-out whitespace-nowrap',
-                        'ring-white/60 ring-offset-2 ring-offset-cyan-400 focus:outline-none focus:ring-2',
+                        "rounded-lg py-3 px-4 text-sm font-mono font-medium leading-5 transition-all duration-200 ease-out whitespace-nowrap",
+                        "ring-white/60 ring-offset-2 ring-offset-cyan-400 focus:outline-none focus:ring-2",
                         selected
-                          ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md'
-                          : 'text-cyan-700 hover:bg-cyan-50 hover:text-cyan-900'
+                          ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md"
+                          : "text-cyan-700 hover:bg-cyan-50 hover:text-cyan-900",
                       )
                     }
                   >
                     <div className="flex items-center justify-center space-x-2">
                       {React.createElement(tab.icon, { className: "h-5 w-5" })}
                       <span>{tab.name}</span>
-                      {typeof tab.notificationCount === 'number' && tab.notificationCount > 0 && (
-                        <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
-                          {tab.notificationCount}
-                        </span>
-                      )}
+                      {typeof tab.notificationCount === "number" &&
+                        tab.notificationCount > 0 && (
+                          <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
+                            {tab.notificationCount}
+                          </span>
+                        )}
                     </div>
                   </Tab>
                 ))}
               </Tab.List>
             </div>
-            
+
             {showRightArrow && (
-              <button 
-                onClick={() => scrollTabs('right')}
+              <button
+                onClick={() => scrollTabs("right")}
                 className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-1 text-cyan-600 hover:text-cyan-800 focus:outline-none"
                 aria-label="Scroll tabs right"
               >
@@ -448,15 +546,15 @@ export default function Dashboard() {
               </button>
             )}
           </div>
-          
+
           <Tab.Panels className="mt-6">
             {/* Dashboard Panel */}
             <Tab.Panel
               className={classNames(
-                'rounded-xl bg-white p-6 shadow-lg shadow-cyan-100/50',
-                'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                'transition-all duration-300 ease-out',
-                'animate-fadeIn'
+                "rounded-xl bg-white p-6 shadow-lg shadow-cyan-100/50",
+                "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
+                "transition-all duration-300 ease-out",
+                "animate-fadeIn",
               )}
             >
               <DashboardAnalytics />
@@ -467,10 +565,10 @@ export default function Dashboard() {
               <Tab.Panel
                 key={idx}
                 className={classNames(
-                  'rounded-xl bg-white p-6 shadow-lg shadow-cyan-100/50',
-                  'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                  'transition-all duration-300 ease-out',
-                  'animate-fadeIn'
+                  "rounded-xl bg-white p-6 shadow-lg shadow-cyan-100/50",
+                  "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
+                  "transition-all duration-300 ease-out",
+                  "animate-fadeIn",
                 )}
               >
                 {React.createElement(tab.component)}

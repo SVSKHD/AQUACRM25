@@ -14,8 +14,8 @@ function App() {
   useEffect(() => {
     // Check for auth token
     const token = localStorage.getItem("token");
-    if (token){
-      console.log("hello")
+    if (token) {
+      console.log("hello");
     }
     if (!token) {
       setIsAuthDialogOpen(true); // show auth dialog if not logged in
@@ -95,7 +95,6 @@ function App() {
                     Sign In to Access Dashboard
                   </button>
                 </div>
-{JSON.stringify(isAuthenticated)}
                 <AuthDialog
                   isOpen={isAuthDialogOpen}
                   onClose={() => setIsAuthDialogOpen(false)}

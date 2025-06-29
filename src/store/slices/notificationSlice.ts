@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Notification {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   timestamp: string;
   read: boolean;
   link?: string;
@@ -17,11 +17,11 @@ interface NotificationState {
 
 const initialState: NotificationState = {
   items: [],
-  unreadCount: 0
+  unreadCount: 0,
 };
 
 const notificationSlice = createSlice({
-  name: 'notifications',
+  name: "notifications",
   initialState,
   reducers: {
     addNotification: (state, action: PayloadAction<Notification>) => {
@@ -31,14 +31,16 @@ const notificationSlice = createSlice({
       }
     },
     markAsRead: (state, action: PayloadAction<string>) => {
-      const notification = state.items.find(item => item.id === action.payload);
+      const notification = state.items.find(
+        (item) => item.id === action.payload,
+      );
       if (notification && !notification.read) {
         notification.read = true;
         state.unreadCount--;
       }
     },
     markAllAsRead: (state) => {
-      state.items.forEach(item => {
+      state.items.forEach((item) => {
         if (!item.read) {
           item.read = true;
         }
@@ -46,20 +48,22 @@ const notificationSlice = createSlice({
       state.unreadCount = 0;
     },
     removeNotification: (state, action: PayloadAction<string>) => {
-      const notification = state.items.find(item => item.id === action.payload);
+      const notification = state.items.find(
+        (item) => item.id === action.payload,
+      );
       if (notification && !notification.read) {
         state.unreadCount--;
       }
-      state.items = state.items.filter(item => item.id !== action.payload);
-    }
-  }
+      state.items = state.items.filter((item) => item.id !== action.payload);
+    },
+  },
 });
 
 export const {
   addNotification,
   markAsRead,
   markAllAsRead,
-  removeNotification
+  removeNotification,
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

@@ -43,7 +43,7 @@ export const checkAuth = createAsyncThunk("auth/checkAuth", async () => {
   if (!userString) return null;
 
   const user = JSON.parse(userString);
-  
+
   // ✅ return the expected shape
   return {
     id: user.id || user._id,

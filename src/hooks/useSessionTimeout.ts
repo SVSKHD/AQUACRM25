@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import { useAppDispatch } from '@/store/hooks';
-import { signOut } from '@/store/slices/authSlice';
+import { useEffect, useState, useRef } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { signOut } from "@/store/slices/authSlice";
 
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 const WARNING_TIME = 60 * 1000; // 1 minute before timeout
@@ -24,7 +24,7 @@ export function useSessionTimeout() {
       setTimeLeft(60);
 
       countdownInterval.current = setInterval(() => {
-        setTimeLeft(prev => {
+        setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(countdownInterval.current);
             return 0;
@@ -47,11 +47,11 @@ export function useSessionTimeout() {
       resetTimers();
     };
 
-    window.addEventListener('mousemove', handleUserActivity);
-    window.addEventListener('keydown', handleUserActivity);
-    window.addEventListener('click', handleUserActivity);
-    window.addEventListener('scroll', handleUserActivity);
-    window.addEventListener('touchstart', handleUserActivity);
+    window.addEventListener("mousemove", handleUserActivity);
+    window.addEventListener("keydown", handleUserActivity);
+    window.addEventListener("click", handleUserActivity);
+    window.addEventListener("scroll", handleUserActivity);
+    window.addEventListener("touchstart", handleUserActivity);
 
     resetTimers();
 
@@ -59,11 +59,11 @@ export function useSessionTimeout() {
       clearTimeout(timeoutId.current);
       clearTimeout(warningTimeoutId.current);
       clearInterval(countdownInterval.current);
-      window.removeEventListener('mousemove', handleUserActivity);
-      window.removeEventListener('keydown', handleUserActivity);
-      window.removeEventListener('click', handleUserActivity);
-      window.removeEventListener('scroll', handleUserActivity);
-      window.removeEventListener('touchstart', handleUserActivity);
+      window.removeEventListener("mousemove", handleUserActivity);
+      window.removeEventListener("keydown", handleUserActivity);
+      window.removeEventListener("click", handleUserActivity);
+      window.removeEventListener("scroll", handleUserActivity);
+      window.removeEventListener("touchstart", handleUserActivity);
     };
   }, [dispatch, showTimeoutWarning]);
 
@@ -81,6 +81,6 @@ export function useSessionTimeout() {
     showTimeoutWarning,
     timeLeft,
     handleStaySignedIn,
-    handleSignOut
+    handleSignOut,
   };
 }

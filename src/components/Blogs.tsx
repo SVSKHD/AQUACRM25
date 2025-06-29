@@ -69,7 +69,6 @@ function BlogDialog({
   onClose: () => void;
   blog?: Blog | null;
 }) {
-
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<Blog>>(
     blog || {
@@ -101,8 +100,6 @@ function BlogDialog({
     }
   }, [blog]);
 
-
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitting blog:", formData);
@@ -125,22 +122,24 @@ function BlogDialog({
               formData.title || "Water Purification"
             }`,
           }),
-        }
+        },
       );
-  
+
       const result = await response.json();
       const text = result?.[0]?.generated_text || result?.generated_text || "";
-  
+
       // Extract fields using simple regex-based parsing
-      const extract = (label:any) =>
+      const extract = (label: any) =>
         text.split(label)[1]?.split("\n")[0]?.trim() || "";
-  
+
       setFormData({
         title: extract("Title:"),
         excerpt: extract("Excerpt:"),
         content: text.split("Content:")[1]?.split("Category:")[0]?.trim() || "",
         category: extract("Category:"),
-        tags: extract("Tags:").split(",").map((t:string) => t.trim()),
+        tags: extract("Tags:")
+          .split(",")
+          .map((t: string) => t.trim()),
         author: extract("Author:"),
         readTime:
           parseInt(extract("Estimated Read Time:").replace(/\D/g, "")) || 3,
@@ -184,7 +183,7 @@ function BlogDialog({
                   as="h3"
                   className="text-2xl font-semibold leading-6 text-gray-900 mb-6"
                 >
-                  {blog ? "Edit Blog Post" : "Create New Blog Post"}  
+                  {blog ? "Edit Blog Post" : "Create New Blog Post"}
                   <button
                     type="button"
                     onClick={generateWithAI}
@@ -391,17 +390,17 @@ export default function Blogs() {
 
   useEffect(() => {
     fetchBlogs();
-  },[])
+  }, []);
 
-  const fetchBlogs = async()=>{
+  const fetchBlogs = async () => {
     try {
-      BlogOperations.getBlogs().then((res)=>{
+      BlogOperations.getBlogs().then((res) => {
         setBlogs(res.data.data);
-      })
+      });
     } catch (error) {
       toast.error("Failed to fetch blogs");
     }
-  }
+  };
 
   const handleEdit = (blog: Blog) => {
     setSelectedBlog(blog);
@@ -506,7 +505,8 @@ export default function Blogs() {
                       : "bg-amber-100 text-amber-800"
                   }`}
                 >
-                  {blog?.status?.charAt(0)?.toUpperCase() + blog?.status?.slice(1)}
+                  {blog?.status?.charAt(0)?.toUpperCase() +
+                    blog?.status?.slice(1)}
                 </span>
               </div>
             </div>

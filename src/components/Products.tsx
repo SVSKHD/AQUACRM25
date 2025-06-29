@@ -571,20 +571,20 @@ export default function Products() {
             </div>
             <div className="mt-4">
               <div className="flex items-center justify-between">
-              {product.discountPriceStatus ? (
-    <>
-      <span className="text-sm font-medium text-gray-500 line-through">
-        ₹{product.price.toLocaleString()}
-      </span>
-      <span className="text-lg font-semibold text-green-600">
-        ₹{product.discountPrice.toLocaleString()}
-      </span>
-    </>
-  ) : (
-    <span className="text-lg font-semibold text-gray-900">
-      ₹{product.price.toLocaleString()}
-    </span>
-  )}
+                {product.discountPriceStatus ? (
+                  <>
+                    <span className="text-sm font-medium text-gray-500 line-through">
+                      ₹{product.price.toLocaleString()}
+                    </span>
+                    <span className="text-lg font-semibold text-green-600">
+                      ₹{product.discountPrice.toLocaleString()}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-lg font-semibold text-gray-900">
+                    ₹{product.price.toLocaleString()}
+                  </span>
+                )}
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     product.stock > 0
