@@ -29,12 +29,12 @@ interface DeleteDialogProps {
   onConfirm: () => void;
 }
 
-function DeleteDialog({
+const DeleteDialog = ({
   isOpen,
   onClose,
   invoice,
   onConfirm,
-}: DeleteDialogProps) {
+}: DeleteDialogProps) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -109,7 +109,7 @@ function DeleteDialog({
       </Dialog>
     </Transition>
   );
-}
+};
 
 export default function InvoiceList({
   invoices,
@@ -140,28 +140,64 @@ export default function InvoiceList({
     setSelectedInvoice(null);
   };
 
-  const handleSend = (id: any) => {
+  const handleSend = (
+    id: { _id: string; customerDetails: { name: string; phone: number } },
+    data: InvoiceData,
+  ) => {
     const invoiceId = id._id;
-    const invoice = `https://admin.aquakart.co.in/invoice/${invoiceId}`;
-    const message = `Hello Dear "${id.customerDetails.name}",  
-we welcome you to **Aquakart Family**.  
+    const invoiceLink = `https://admin.aquakart.co.in/invoice/${invoiceId}`;
+    const name = `*${id.customerDetails.name}*`; // Bold name
 
-Here is your live invoice link: ${invoice}.  
+    let message = "";
 
-**Please save contact to access the invoice.**  
+    switch (true) {
+      case data.po:
+        message = `Hello ${name},  
+🧾 Here is your *Purchase Order* from **Aquakart**.  
+🔗 *Invoice Link:* ${invoiceLink}  
+  
+Thank you for your trust. We're delighted to serve you.`;
+        break;
 
-We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
-    NotifyOperations.sendWhatsApp(id?.customerDetails.phone, message)
+      case data.gst:
+        message = `Hello ${name},  
+📄 We're glad to share your *GST Invoice* and *Product Details*.  
+🔗 *Invoice Link:* ${invoiceLink}  
+  
+Thank you for your business with **Aquakart**.`;
+        break;
+
+      case data.quotation:
+        message = `Hello ${name},  
+📝 Here is your *Quotation* shared by **Aquakart**.  
+🔗 *Quotation Link:* ${invoiceLink}  
+  
+Please let us know if you'd like to proceed or need any changes.`;
+        break;
+
+      default:
+        message = `Hello ${name},  
+🎉 Welcome to the **Aquakart Family**!  
+  
+🔗 *Your Invoice:* ${invoiceLink}  
+  
+📌 Please save this contact so you can always access your invoice.  
+Visit us for more products and offers at [aquakart.co.in](https://aquakart.co.in).  
+We’re happy to have you onboard!`;
+        break;
+    }
+
+    NotifyOperations.sendWhatsApp(id.customerDetails.phone, message)
       .then((res) => {
         if (res) {
-          toast.success("succesfully Sent Invoice");
+          toast.success("✅ Successfully sent invoice via WhatsApp.");
         }
       })
       .catch((err) => {
-        toast.error("something problem", err);
+        console.error("WhatsApp send error:", err);
+        toast.error("❌ Failed to send invoice.");
       });
   };
-
   return (
     <>
       <table className="min-w-full divide-y divide-gray-300">
@@ -277,7 +313,7 @@ We also offer you more discounts at [aquakart.co.in](https://aquakart.co.in).`;
                   <button
                     className="text-blue-600 hover:text-blue-900 bg-blue-50 p-2 rounded-full"
                     title="Send Invoice"
-                    onClick={() => handleSend(invoice)}
+                    onClick={() => handleSend(invoice, invoice)}
                   >
                     <Send className="h-4 w-4" />
                   </button>

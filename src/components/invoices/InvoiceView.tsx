@@ -610,7 +610,7 @@ export default function InvoiceView() {
                           </p>
                           <p>
                             <span className="font-medium">IFSC:</span>{" "}
-                            KKBK0007463
+                            ICIC0001316
                           </p>
                         </div>
                       </div>
@@ -646,7 +646,7 @@ export default function InvoiceView() {
                           </p>
                           <p>
                             <span className="font-medium">IFSC:</span>{" "}
-                            ICIC0001316
+                            KKBK0007463
                           </p>
                         </div>
                       </div>
