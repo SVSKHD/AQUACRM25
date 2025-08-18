@@ -142,7 +142,6 @@ export default function InvoiceList({
 
   const handleSend = (
     id: { _id: string; customerDetails: { name: string; phone: number } },
-    data: InvoiceData,
   ) => {
     const invoiceId = id._id;
     const invoiceLink = `https://admin.aquakart.co.in/invoice/${invoiceId}`;
