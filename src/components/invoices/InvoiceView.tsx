@@ -694,7 +694,19 @@ export default function InvoiceView() {
                 </div>
               </div>
             )}
-
+ <div className="mt-8 pt-8 border-t border-gray-200">
+              <div className="bg-gray-50 rounded-lg border border-gray-200">
+                <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-t-lg">
+                  <h2 className="text-lg font-semibold">Customer Care</h2>
+                </div>
+                <div className="p-6 flex items-center">
+                  <Phone className="h-5 w-5 text-cyan-600 mr-3" />
+                  <span className="text-lg font-medium text-gray-900">
+                    +91 92789 12345
+                  </span>
+                </div>
+              </div>
+            </div>
             {/* Terms and Conditions */}
             <div className="mt-8 pt-8 border-t border-gray-200">
               <div className="bg-gray-50 rounded-lg border border-gray-200">
